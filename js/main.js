@@ -67,7 +67,7 @@ function main(){
         function customShape(x, y, shape, color) {
             let vertices = Matter.Vertices.fromPath(shape);
             return Matter.Bodies.fromVertices(x, y, vertices, {
-                
+                frictionAir : 0,
                 isStatic: 0
             });
         }
@@ -86,11 +86,10 @@ function main(){
         
         
         let shape = customShape(400,600, '550,450 455,519 491,631 609,631 645,519', "#ff0000"); 
-        shape.inertia = 1
+        
         let boxA = Bodies.rectangle(400, 200, 80, 80, {frictionAir:0}); 
         let boxB = Bodies.rectangle(450, 50, 80, 80, {frictionAir:0}); 
-        Body.setVelocity(shape, {x : 0, y : 1})
-        console.log(shape)
+        Body.setVelocity(shape, {x : 0, y : 3})
         
         
         bodies.push(shape);
@@ -99,14 +98,10 @@ function main(){
         
         Composite.add(world, bodies);
 
+
         Render.run(render);
-        
-
         let runner = Runner.create();
-        
-        
         Runner.run(runner, engine);
-
         let mouse = Mouse.create(render.canvas),
             mouseConstraint = MouseConstraint.create(engine, {
             mouse: mouse,
@@ -116,27 +111,29 @@ function main(){
                 visible: false
                 }
             }
-            });
+        });
         Composite.add(world, mouseConstraint);
         render.mouse = mouse;
 
-        // document.querySelector(".force").addEventListener("mousedown", function () {
-        //     // Body.setVelocity( shape, {x: 10, y: -10});
-        // })
-        let i = 0;
 
-        function constantFall(){
-            i++;
-            Body.setPosition( shape, {x : percentX(50), y: i++});
-        }
-        console.log(engine)
+
+/////////////////////////////////////////////////// events ///////////////////////////////////////////////////
+        let i = 0;
+        let collisionFlag = 0;
         Events.on(runner, 'afterTick', function(){
-            
+            if (collisionFlag){
+                Body.applyForce(shape, shape.position, {x : 0, y : shape.mass * 0.001})
+                console.log(shape)
+            }
         })
         
-        // Events.on(engine, 'collisionStart', function(event) {
-        //     console.log(event.pairs.slice()) // event.pairs : pair들의 array
-        // });
+        Events.on(engine, 'collisionStart', function(event) {
+            for (p of event.pairs){
+                if(p.bodyA === shape || p.bodyB === shape){
+                    collisionFlag = 1;
+                }
+            }
+        });
 
     
 }
