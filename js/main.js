@@ -37,7 +37,10 @@ function main(){
                 Runner = Matter.Runner;
         
         // create an engine
-        const engine = Engine.create(),
+        const engine = Engine.create({
+                gravity : {x : 0, y : 0, scale : 1}
+            }
+        ),
                 world = engine.world;
         
         // create a renderer
@@ -55,18 +58,17 @@ function main(){
         
         let bodies = []
         
-        const width = 800, height = 600;
+        const bodyOption = {
+            isStatic : true,
+            frictionAir : 0
+            
+        }
         
         function customShape(x, y, shape, color) {
             let vertices = Matter.Vertices.fromPath(shape);
             return Matter.Bodies.fromVertices(x, y, vertices, {
                 
-                isStatic: 0,
-                mass: 0,
-                render: { 
-                fillStyle: color,
-                lineWidth: 0
-                }
+                isStatic: 0
             });
         }
         
@@ -83,16 +85,17 @@ function main(){
         
         
         
-        let shape = customShape(400,400, '550,450 455,519 491,631 609,631 645,519', "#ff0000"); 
-        let boxA = Bodies.rectangle(400, 200, 80, 80); 
-        let boxB = Bodies.rectangle(450, 50, 80, 80); 
-        
+        let shape = customShape(400,600, '550,450 455,519 491,631 609,631 645,519', "#ff0000"); 
+        shape.inertia = 1
+        let boxA = Bodies.rectangle(400, 200, 80, 80, {frictionAir:0}); 
+        let boxB = Bodies.rectangle(450, 50, 80, 80, {frictionAir:0}); 
+        Body.setVelocity(shape, {x : 0, y : 1})
+        console.log(shape)
         
         
         bodies.push(shape);
         bodies.push(boxA);
         bodies.push(boxB);
-        console.log(boxA)
         
         Composite.add(world, bodies);
 
@@ -126,18 +129,14 @@ function main(){
             i++;
             Body.setPosition( shape, {x : percentX(50), y: i++});
         }
+        console.log(engine)
+        Events.on(runner, 'afterTick', function(){
+            
+        })
         
-        // Events.on(runner, 'afterTick', constantFall)
-        
-        Events.on(runner, 'collisionStart', function(event) {
-            var pairs = event.pairs;
-            console.log(pairs)
-        });
-        Events.on(runner, 'collisionActive', function(event) {
-            var pairs = event.pairs;
-            console.log(pairs)
-        });
-
+        // Events.on(engine, 'collisionStart', function(event) {
+        //     console.log(event.pairs.slice()) // event.pairs : pair들의 array
+        // });
 
     
 }
