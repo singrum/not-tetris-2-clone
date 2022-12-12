@@ -116,17 +116,27 @@ function main(){
             });
         Composite.add(world, mouseConstraint);
         render.mouse = mouse;
-        
+
         // document.querySelector(".force").addEventListener("mousedown", function () {
         //     // Body.setVelocity( shape, {x: 10, y: -10});
         // })
         let i = 0;
-        Events.on(runner, 'afterTick', function(event) {
+
+        function constantFall(){
             i++;
             Body.setPosition( shape, {x : percentX(50), y: i++});
-            
         }
-        )
+        
+        // Events.on(runner, 'afterTick', constantFall)
+        
+        Events.on(runner, 'collisionStart', function(event) {
+            var pairs = event.pairs;
+            console.log(pairs)
+        });
+        Events.on(runner, 'collisionActive', function(event) {
+            var pairs = event.pairs;
+            console.log(pairs)
+        });
 
 
     
