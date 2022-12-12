@@ -26,6 +26,7 @@ function main(){
         const Engine = Matter.Engine,
                 Bodies = Matter.Bodies,
                 Body = Matter.Body,
+                Events = Matter.Events,
                 Svg = Matter.Svg,
                 Vertices = Matter.Vertices,
                 Constraint = Matter.Constraint,
@@ -114,10 +115,20 @@ function main(){
             }
             });
         Composite.add(world, mouseConstraint);
-        document.querySelector(".force").addEventListener("mousedown", function () {
-            Body.applyForce( boxA, {x: boxA.position.x, y: boxA.position.y}, {x: 0.05, y: 0});
-        })
         render.mouse = mouse;
+        
+        // document.querySelector(".force").addEventListener("mousedown", function () {
+        //     // Body.setVelocity( shape, {x: 10, y: -10});
+        // })
+        let i = 0;
+        Events.on(runner, 'afterTick', function(event) {
+            i++;
+            Body.setPosition( shape, {x : percentX(50), y: i++});
+            
+        }
+        )
+
+
     
 }
 
