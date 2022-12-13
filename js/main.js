@@ -94,7 +94,42 @@ function main(){
         
         
         //object
-        let shape_I = customShape(offset.x + unit * 5/3,offset.y + unit * 2, `0,0 0,${unit} ${unit * 4},${unit} ${unit * 4},0`, "#ff0000"); 
+        let tetris = {
+            I : {
+                shape : `0,0 0,${unit} ${unit * 4},${unit} ${unit * 4},0`,
+                color : '#9b5fe0',
+                pos : {x : offset.x + unit*4, y : offset.y}
+            },
+            O : {
+                shape : `0,0 0,${unit * 2} ${unit * 2},${unit * 2} ${unit * 2},0`,
+                color : '#16a4d8',
+                pos : {x : offset.x + unit * 4, y : offset.y}
+            },
+            T : {
+                shape : `0,0 0,${unit} ${unit},${unit} ${unit},${unit * 2} ${unit * 2},${unit * 2} ${unit * 2},${unit} ${unit * 3},${unit} ${unit * 3},0`,
+                color : '#60dbe8',
+                pos : {x : offset.x + unit * 7/2, y : offset.y}
+            },
+            J : {
+                shape : `${unit},0 ${unit},${unit*2} 0,${unit*2} 0,${unit*3} ${unit*2},${unit*3} ${unit*2},0`,
+                color : '#8bd346',
+                pos : {x : window_w/2, y : offset.y}
+            },
+            L : {
+                shape : `0,0 0,${unit*3} ${unit*2},${unit*3} ${unit*2},${unit*2} ${unit},${unit*2} ${unit},0`,
+                color : '#efdf48',
+                pos : {x : window_w/2, y : offset.y}
+            },
+            S : {
+                shape : `${unit},0 ${unit},${unit} 0,${unit} 0,${unit*2} ${unit*2},${unit*2} ${unit*2},1 ${unit*3},1 ${unit*3},0`,
+                color : '#f9a52c',
+                pos : {x : window_w/2, y : offset.y}
+            },
+            Z : {
+                shape : ``
+            }
+        }
+        let shape_I = customShape(offset.x + unit * 4,offset.y, `0,0 0,${unit} ${unit * 4},${unit} ${unit * 4},0`, "#ff0000"); 
         
         Body.setVelocity(shape_I, {x : 0, y : 3})
         
