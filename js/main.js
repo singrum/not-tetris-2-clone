@@ -80,10 +80,14 @@ function main(){
         const window_h = window.innerHeight;
         const frame_h = window_h - floor_h;
         const frame_w = frameRatio * frame_h;
-        const 
-        let ground = Bodies.rectangle(window_w/2, window_h - floor_h/2, window_w, floor_h, { isStatic: true });
-        let leftWall = Bodies.rectangle((window_w - frame_w)/4, window_h / 2, (window_w - frame_w)/2,window_h, { isStatic: true });
-        let rightWall = Bodies.rectangle(window_w - (window_w - frame_w)/4, window_h / 2,(window_w - frame_w)/2,window_h,{ isStatic: true });
+        const unit = frame_h / 21;
+        
+        const offset = {x : (window_w - frame_w)/2, y : -100};
+        let ground = Bodies.rectangle(window_w/2, window_h , frame_w, floor_h, { isStatic: true, render : {fillStyle: "#000000", lineWidth: 0}});
+        let leftWall = Bodies.rectangle((window_w - frame_w)/4, window_h / 2, (window_w - frame_w)/2,window_h, { isStatic: true, render : {fillStyle: "#000000", lineWidth: 0}});
+        let rightWall = Bodies.rectangle(window_w - (window_w - frame_w)/4, window_h / 2,(window_w - frame_w)/2,window_h,{ isStatic: true, render : {fillStyle: "#000000", lineWidth: 0}});
+        
+        console.log(ground)
         
         bodies.push(ground);
         bodies.push(leftWall);
@@ -92,7 +96,7 @@ function main(){
         
         
         //object
-        let shape = customShape(400,600, '550,450 455,519 491,631 609,631 645,519', "#ff0000"); 
+        let shape = customShape(offset.x + 10,offset.y + 10, `0,0 ${unit},${unit} ${unit},0`, "#ff0000"); 
         
         let boxA = Bodies.rectangle(400, 200, 80, 80, {frictionAir:0}); 
         let boxB = Bodies.rectangle(450, 50, 80, 80, {frictionAir:0}); 
