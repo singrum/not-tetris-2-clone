@@ -75,11 +75,15 @@ function main(){
         
         //frame 7 : 3
         const floor_h = 200;
+        const frameRatio = 3/7;
         const window_w = window.innerWidth;
         const window_h = window.innerHeight;
+        const frame_h = window_h - floor_h;
+        const frame_w = frameRatio * frame_h;
+        const 
         let ground = Bodies.rectangle(window_w/2, window_h - floor_h/2, window_w, floor_h, { isStatic: true });
-        let leftWall = Bodies.rectangle((window_w - (3/7) * (window_h - floor_h))/4, window_h / 2, (window_w - (3/7) * (window_h - floor_h))/2,window_h, { isStatic: true });
-        let rightWall = Bodies.rectangle(window_w - (window_w - (3/7) * (window_h - floor_h))/4, window_h / 2,(window_w - (3/7) * (window_h - floor_h))/2,window_h,{ isStatic: true });
+        let leftWall = Bodies.rectangle((window_w - frame_w)/4, window_h / 2, (window_w - frame_w)/2,window_h, { isStatic: true });
+        let rightWall = Bodies.rectangle(window_w - (window_w - frame_w)/4, window_h / 2,(window_w - frame_w)/2,window_h,{ isStatic: true });
         
         bodies.push(ground);
         bodies.push(leftWall);
