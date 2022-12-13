@@ -126,10 +126,10 @@ function main(){
                 pos : {x : window_w/2, y : offset.y}
             },
             Z : {
-                shape : ``
+                shape : `0,0 0,${unit} ${unit},${unit} ${unit},${unit*2} ${unit*3},${unit*2} ${unit*3},${unit} ${unit*2},${unit} ${unit*2},0`
             }
         }
-        let shape_I = customShape(offset.x + unit * 4,offset.y, `0,0 0,${unit} ${unit * 4},${unit} ${unit * 4},0`, "#ff0000"); 
+        let shape_I = customShape(tetris.pos.x, tetris.pos.y, tetris.I.shape, tetris.I.color); 
         
         Body.setVelocity(shape_I, {x : 0, y : 3})
         
