@@ -1,14 +1,17 @@
 // import * as Matter from "matter-js"
 
-// Matter.World > composite > boxA, boxB, ...
-// Matter.World.add(engine.world, composite)
-// Matter.World는 Matter.Composite으로 통합
-// composite.add(engine.world, [boxA, boxB, ...])
+/*
+    Matter.World > composite > boxA, boxB, ...
+    Matter.World.add(engine.world, composite)
+    Matter.World는 Matter.Composite으로 통합
+    composite.add(engine.world, [boxA, boxB, ...])
 
-// https://brm.io/matter-js/demo/#mixed 속성 테스트
-// https://codepen.io/collection/DPRzMX codepen 예시
-// https://stackoverflow.com/questions/3742479/how-to-cut-a-hole-in-an-svg-rectangle
-// https://github.com/liabru/matter-js/blob/master/examples/svg.js svg
+    https://brm.io/matter-js/demo/#mixed 속성 테스트
+    https://codepen.io/collection/DPRzMX codepen 예시
+    https://stackoverflow.com/questions/3742479/how-to-cut-a-hole-in-an-svg-rectangle
+    https://github.com/liabru/matter-js/blob/master/examples/svg.js svg
+    https://colorswall.com/palette/171311 color pallete
+*/
 
 function main(){
         function percentX(percent) {
@@ -126,9 +129,11 @@ function main(){
                 pos : {x : window_w/2, y : offset.y}
             },
             Z : {
-                shape : `0,0 0,${unit} ${unit},${unit} ${unit},${unit*2} ${unit*3},${unit*2} ${unit*3},${unit} ${unit*2},${unit} ${unit*2},0`
+                shape : `0,0 0,${unit} ${unit},${unit} ${unit},${unit*2} ${unit*3},${unit*2} ${unit*3},${unit} ${unit*2},${unit} ${unit*2},0`,
+                color : '#d64e12',
+                pos : {x : window_w/2, y : offset.y}
             }
-        }
+        };
         let shape_I = customShape(tetris.pos.x, tetris.pos.y, tetris.I.shape, tetris.I.color); 
         
         Body.setVelocity(shape_I, {x : 0, y : 3})
