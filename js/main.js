@@ -61,7 +61,7 @@ function main(){
             }
         });
         
-        let bodies = []
+        let allBodies = []
         
         
         function customShape(shapeOption) {
@@ -87,9 +87,9 @@ function main(){
         let leftWall = Bodies.rectangle((window_w - frame_w)/4, window_h / 2, (window_w - frame_w)/2,window_h, { isStatic: true, render : {fillStyle: "#000000", lineWidth: 0}});
         let rightWall = Bodies.rectangle(window_w - (window_w - frame_w)/4, window_h / 2,(window_w - frame_w)/2,window_h,{ isStatic: true, render : {fillStyle: "#000000", lineWidth: 0}});
         
-        bodies.push(ground);
-        bodies.push(leftWall);
-        bodies.push(rightWall);
+        allBodies.push(ground);
+        allBodies.push(leftWall);
+        allBodies.push(rightWall);
         
         
         
@@ -134,15 +134,10 @@ function main(){
             }
         };
 
-        let turn = customShape(Object.values(tetris)[Math.floor(Math.random() * Object.keys(tetris).length)])
-        console.log(turn)
-        
-        Body.setVelocity(turn, {x : 0, y : 3})
-        
-        bodies.push(turn);
-        
-        Composite.add(world, bodies);
-
+        // let turn = customShape(Object.values(tetris)[Math.floor(Math.random() * Object.keys(tetris).length)])
+        // Body.setVelocity(turn, {x : 0, y : 3})
+        // bodies.push(turn);
+        // Composite.add(world, bodies);
 
         Render.run(render);
         let runner = Runner.create();
@@ -163,12 +158,25 @@ function main(){
 
 
 /////////////////////////////////////////////////// events ///////////////////////////////////////////////////
-        let i = 0;
+        let freeBodies = [];
+        let currBody
         let collisionFlag = 0;
+        let newFlag = 1;
+
+
         Events.on(runner, 'afterTick', function(){
+            freeBodies.forEach(body => Body.applyForce(body, body.position, {x : 0, y : body.mass * 0.001}))
+            if (newFlag){
+                newFlag = 0;
+                currBody = customShape(Object.values(tetris)[Math.floor(Math.random() * Object.keys(tetris).length)]);
+                Body.setVelocity(currBody, {x : 0, y : 3})
+                allBodies.push(currBody);
+                Composite.add(world, allBodies);
+            }
             if (collisionFlag){
-                Body.applyForce(turn, turn.position, {x : 0, y : turn.mass * 0.001})
-                
+                collisionFlag = 0;
+                newFlag = 1;
+                freeBodies.push(turn);
             }
         })
         
