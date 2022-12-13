@@ -87,8 +87,6 @@ function main(){
         let leftWall = Bodies.rectangle((window_w - frame_w)/4, window_h / 2, (window_w - frame_w)/2,window_h, { isStatic: true, render : {fillStyle: "#000000", lineWidth: 0}});
         let rightWall = Bodies.rectangle(window_w - (window_w - frame_w)/4, window_h / 2,(window_w - frame_w)/2,window_h,{ isStatic: true, render : {fillStyle: "#000000", lineWidth: 0}});
         
-        console.log(ground)
-        
         bodies.push(ground);
         bodies.push(leftWall);
         bodies.push(rightWall);
@@ -96,15 +94,11 @@ function main(){
         
         
         //object
-        let shape = customShape(offset.x + 10,offset.y + 10, `0,0 ${unit},${unit} ${unit},0`, "#ff0000"); 
+        let shape_I = customShape(offset.x + unit * 5/3,offset.y + unit * 2, `0,0 0,${unit} ${unit * 4},${unit} 0,${unit * 4}`, "#ff0000"); 
         
-        let boxA = Bodies.rectangle(400, 200, 80, 80, {frictionAir:0}); 
-        let boxB = Bodies.rectangle(450, 50, 80, 80, {frictionAir:0}); 
-        Body.setVelocity(shape, {x : 0, y : 3})
+        Body.setVelocity(shape_I, {x : 0, y : 3})
         
-        bodies.push(shape);
-        bodies.push(boxA);
-        bodies.push(boxB);
+        bodies.push(shape_I);
         
         Composite.add(world, bodies);
 
@@ -132,14 +126,14 @@ function main(){
         let collisionFlag = 0;
         Events.on(runner, 'afterTick', function(){
             if (collisionFlag){
-                Body.applyForce(shape, shape.position, {x : 0, y : shape.mass * 0.001})
+                Body.applyForce(shape_I, shape_I.position, {x : 0, y : shape.mass * 0.001})
                 
             }
         })
         
         Events.on(engine, 'collisionStart', function(event) {
             for (p of event.pairs){
-                if(p.bodyA === shape || p.bodyB === shape){
+                if(p.bodyA === shape_I || p.bodyB === shape_I){
                     collisionFlag = 1;
                 }
             }
