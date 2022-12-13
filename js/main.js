@@ -94,7 +94,7 @@ function main(){
         
         
         //object
-        let shape_I = customShape(offset.x + unit * 5/3,offset.y + unit * 2, `0,0 0,${unit} ${unit * 4},${unit} 0,${unit * 4}`, "#ff0000"); 
+        let shape_I = customShape(offset.x + unit * 5/3,offset.y + unit * 2, `0,0 0,${unit} ${unit * 4},${unit} ${unit * 4},0`, "#ff0000"); 
         
         Body.setVelocity(shape_I, {x : 0, y : 3})
         
@@ -126,7 +126,7 @@ function main(){
         let collisionFlag = 0;
         Events.on(runner, 'afterTick', function(){
             if (collisionFlag){
-                Body.applyForce(shape_I, shape_I.position, {x : 0, y : shape.mass * 0.001})
+                Body.applyForce(shape_I, shape_I.position, {x : 0, y : shape_I.mass * 0.001})
                 
             }
         })
