@@ -7,7 +7,8 @@
 
 // https://brm.io/matter-js/demo/#mixed 속성 테스트
 // https://codepen.io/collection/DPRzMX codepen 예시
-
+// https://stackoverflow.com/questions/3742479/how-to-cut-a-hole-in-an-svg-rectangle
+// https://github.com/liabru/matter-js/blob/master/examples/svg.js svg
 
 function main(){
         function percentX(percent) {
@@ -72,25 +73,23 @@ function main(){
             });
         }
         
-        //frame
-        let ground = Bodies.rectangle(percentX(100) / 2, percentY(100) + 10, percentX(100), 20, { isStatic: true });
-        let ceiling = Bodies.rectangle(percentX(100) / 2, percentY(0) - 10, percentX(100), 20, { isStatic: true }); 
-        let rightWall = Bodies.rectangle(percentX(100) + 10, percentY(100) / 2, 20, percentY(100), { isStatic: true });
+        //frame 7 : 3
+        let ground = Bodies.rectangle(percentX(100) / 2, percentY(100) - 100, percentX(100), 200, { isStatic: true });
         let leftWall = Bodies.rectangle(percentX(0) - 10, percentY(100) / 2, 20, percentY(100), { isStatic: true });
+        let rightWall = Bodies.rectangle(percentX(100) + 10, percentY(100) / 2, 20, percentY(100), { isStatic: true });
+        
         bodies.push(ground);
-        bodies.push(ceiling);
-        bodies.push(rightWall);
         bodies.push(leftWall);
+        bodies.push(rightWall);
         
         
         
-        
+        //object
         let shape = customShape(400,600, '550,450 455,519 491,631 609,631 645,519', "#ff0000"); 
         
         let boxA = Bodies.rectangle(400, 200, 80, 80, {frictionAir:0}); 
         let boxB = Bodies.rectangle(450, 50, 80, 80, {frictionAir:0}); 
         Body.setVelocity(shape, {x : 0, y : 3})
-        
         
         bodies.push(shape);
         bodies.push(boxA);
@@ -123,7 +122,7 @@ function main(){
         Events.on(runner, 'afterTick', function(){
             if (collisionFlag){
                 Body.applyForce(shape, shape.position, {x : 0, y : shape.mass * 0.001})
-                console.log(shape)
+                
             }
         })
         

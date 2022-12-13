@@ -11,3 +11,8 @@ button {
     outline: none;
     position:absolute;
   }
+
+  svg{
+    position : absolute;
+    
+  }
