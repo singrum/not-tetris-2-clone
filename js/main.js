@@ -35,6 +35,7 @@ function main(){
                 Vertices = Matter.Vertices,
                 Constraint = Matter.Constraint,
                 Composite = Matter.Composite,
+                Common = Matter.Common,
                 Mouse = Matter.Mouse,
                 MouseConstraint = Matter.MouseConstraint,
                 Render = Matter.Render,
@@ -62,11 +63,6 @@ function main(){
         
         let bodies = []
         
-        const bodyOption = {
-            isStatic : true,
-            frictionAir : 0
-            
-        }
         
         function customShape(shapeOption) {
             let vertices = Matter.Vertices.fromPath(shapeOption.shape);
@@ -98,6 +94,8 @@ function main(){
         
         
         //object
+        Common.setDecomp;
+
         let tetris = {
             I : {
                 shape : `0,0 0,${unit} ${unit * 4},${unit} ${unit * 4},0`,
@@ -125,7 +123,7 @@ function main(){
                 pos : {x : window_w/2, y : offset.y}
             },
             S : {
-                shape : `${unit},0 ${unit},${unit} 0,${unit} 0,${unit*2} ${unit*2},${unit*2} ${unit*2},1 ${unit*3},1 ${unit*3},0`,
+                shape : `${unit},0 ${unit},${unit} 0,${unit} 0,${unit*2} ${unit*2},${unit*2} ${unit*2},${unit} ${unit*3},${unit} ${unit*3},0`,
                 color : '#f9a52c',
                 pos : {x : window_w/2, y : offset.y}
             },
@@ -135,11 +133,13 @@ function main(){
                 pos : {x : window_w/2, y : offset.y}
             }
         };
-        let shape_I = customShape(tetris.J); 
+
+        let turn = customShape(Object.values(tetris)[Math.floor(Math.random() * Object.keys(tetris).length)])
+        console.log(turn)
         
-        Body.setVelocity(shape_I, {x : 0, y : 3})
+        Body.setVelocity(turn, {x : 0, y : 3})
         
-        bodies.push(shape_I);
+        bodies.push(turn);
         
         Composite.add(world, bodies);
 
@@ -167,14 +167,19 @@ function main(){
         let collisionFlag = 0;
         Events.on(runner, 'afterTick', function(){
             if (collisionFlag){
-                Body.applyForce(shape_I, shape_I.position, {x : 0, y : shape_I.mass * 0.001})
+                Body.applyForce(turn, turn.position, {x : 0, y : turn.mass * 0.001})
                 
             }
         })
         
+        function isValidCollision(turn, pair){
+            let bodiesInPair = [pair.bodyA, pair.bodyB]
+            return turn.parts.some(e => bodiesInPair.includes(e) && !bodiesInPair.includes(leftWall) && !bodiesInPair.includes(rightWall))
+        }
         Events.on(engine, 'collisionStart', function(event) {
+            
             for (p of event.pairs){
-                if(p.bodyA === shape_I || p.bodyB === shape_I){
+                if (isValidCollision(turn, p)){
                     collisionFlag = 1;
                 }
             }
