@@ -68,11 +68,12 @@ function main(){
             
         }
         
-        function customShape(x, y, shape, color) {
-            let vertices = Matter.Vertices.fromPath(shape);
-            return Matter.Bodies.fromVertices(x, y, vertices, {
+        function customShape(shapeOption) {
+            let vertices = Matter.Vertices.fromPath(shapeOption.shape);
+            return Matter.Bodies.fromVertices(shapeOption.pos.x, shapeOption.pos.y, vertices, {
                 frictionAir : 0,
-                isStatic: 0
+                isStatic: 0,
+                render : {fillStyle: shapeOption.color}
             });
         }
         
@@ -134,7 +135,7 @@ function main(){
                 pos : {x : window_w/2, y : offset.y}
             }
         };
-        let shape_I = customShape(tetris.pos.x, tetris.pos.y, tetris.I.shape, tetris.I.color); 
+        let shape_I = customShape(tetris.J); 
         
         Body.setVelocity(shape_I, {x : 0, y : 3})
         
