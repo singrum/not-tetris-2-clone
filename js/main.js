@@ -74,9 +74,12 @@ function main(){
         }
         
         //frame 7 : 3
-        let ground = Bodies.rectangle(percentX(100) / 2, percentY(100) - 100, percentX(100), 200, { isStatic: true });
-        let leftWall = Bodies.rectangle(percentX(0) - 10, percentY(100) / 2, 20, percentY(100), { isStatic: true });
-        let rightWall = Bodies.rectangle(percentX(100) + 10, percentY(100) / 2, 20, percentY(100), { isStatic: true });
+        const floor_h = 200;
+        const window_w = window.innerWidth;
+        const window_h = window.innerHeight;
+        let ground = Bodies.rectangle(window_w/2, window_h - floor_h/2, window_w, floor_h, { isStatic: true });
+        let leftWall = Bodies.rectangle((window_w - (3/7) * (window_h - floor_h))/4, window_h / 2, (window_w - (3/7) * (window_h - floor_h))/2,window_h, { isStatic: true });
+        let rightWall = Bodies.rectangle(window_w - (window_w - (3/7) * (window_h - floor_h))/4, window_h / 2,(window_w - (3/7) * (window_h - floor_h))/2,window_h,{ isStatic: true });
         
         bodies.push(ground);
         bodies.push(leftWall);
