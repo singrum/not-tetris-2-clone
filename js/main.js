@@ -14,6 +14,7 @@
 */
 
 function main(){
+    
         function percentX(percent) {
             return Math.round((percent / 100) * window.innerWidth);
         }
@@ -43,7 +44,7 @@ function main(){
         
         // create an engine
         const engine = Engine.create({
-                gravity : {x : 0, y : 0, scale : 1}
+                gravity : {x : 0, y : 1, scale : 0.001}
             }
         ),
                 world = engine.world;
@@ -60,7 +61,7 @@ function main(){
             background: "transparent"
             }
         });
-        
+        engine.positionIterations = 10
         let allBodies = []
         
         
@@ -165,32 +166,22 @@ function main(){
 
 
         Events.on(runner, 'afterTick', function(){
-            freeBodies.forEach(body => Body.applyForce(body, body.position, {x : 0, y : body.mass * 0.001}))
             if (newFlag){
                 newFlag = 0;
                 currBody = customShape(Object.values(tetris)[Math.floor(Math.random() * Object.keys(tetris).length)]);
-                Body.setVelocity(currBody, {x : 0, y : 3})
+                // Body.setVelocity(currBody, {x : 0, y : 10})
                 allBodies.push(currBody);
                 Composite.add(world, allBodies);
             }
-            if (collisionFlag){
-                collisionFlag = 0;
-                newFlag = 1;
-                freeBodies.push(turn);
-            }
         })
         
-        function isValidCollision(turn, pair){
-            let bodiesInPair = [pair.bodyA, pair.bodyB]
-            return turn.parts.some(e => bodiesInPair.includes(e) && !bodiesInPair.includes(leftWall) && !bodiesInPair.includes(rightWall))
-        }
+        // function isValidCollision(turn, pair){
+        //     let bodiesInPair = [pair.bodyA, pair.bodyB]
+        //     return turn.parts.some(e => bodiesInPair.includes(e) && !bodiesInPair.includes(leftWall) && !bodiesInPair.includes(rightWall))
+        // }
         Events.on(engine, 'collisionStart', function(event) {
-            
-            for (p of event.pairs){
-                if (isValidCollision(turn, p)){
-                    collisionFlag = 1;
-                }
-            }
+            newFlag = 1;
+            freeBodies.push(currBody)
         });
 
     
