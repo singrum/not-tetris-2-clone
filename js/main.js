@@ -85,11 +85,12 @@ function main(){
         
         const offset = {x : (window_w - frame_w)/2, y : -100};
         let ground = Bodies.rectangle(window_w/2, window_h , frame_w, floor_h, { isStatic: true, render : {fillStyle: "#000000", lineWidth: 0}});
-        let leftWall = Bodies.rectangle((window_w - frame_w)/4, window_h / 2, (window_w - frame_w)/2,window_h, { isStatic: true, render : {fillStyle: "#000000", lineWidth: 0}});
-        let rightWall = Bodies.rectangle(window_w - (window_w - frame_w)/4, window_h / 2,(window_w - frame_w)/2,window_h,{ isStatic: true, render : {fillStyle: "#000000", lineWidth: 0}});
+        let leftWall = Bodies.rectangle((window_w - frame_w)/4, window_h / 2, (window_w - frame_w)/2,window_h, { isStatic: true, friction : 0, render : {fillStyle: "#000000", lineWidth: 0}});
+        let rightWall = Bodies.rectangle(window_w - (window_w - frame_w)/4, window_h / 2,(window_w - frame_w)/2,window_h,{ isStatic: true, friction : 0, render : {fillStyle: "#000000", lineWidth: 0}});
         Composite.add(world, ground)
         Composite.add(world, leftWall)
         Composite.add(world, rightWall)
+        console.log(leftWall)
         
         
         
@@ -158,6 +159,62 @@ function main(){
 
 
 /////////////////////////////////////////////////// events ///////////////////////////////////////////////////
+        let forceDirection = -1;
+        let forceDown = -1;
+        let rotateDirection = -1;
+        const Left = 0, Right = 1, Down = 2, CCL = 3, CL = 4;
+        document.addEventListener('keydown', keydownEvent, false); 
+        document.addEventListener('keyup', keyupEvent, false); 
+        function keydownEvent(e){
+            if(e.keyCode === 37){
+                forceDirection = Left;
+            }
+            if(e.keyCode === 39){
+                forceDirection = Right;
+            }
+            if(e.keyCode === 40){
+                forceDown = Down;
+            }
+
+            if(e.keyCode === 90){
+                rotateDirection = CL;
+            }
+            if (e.keyCode === 88){
+                rotateDirection = CCL;
+            }
+        }
+        function keyupEvent(e){
+            if(e.keyCode === 37){
+                if(forceDirection === Left){
+                    forceDirection = -1;
+                }
+            }
+            if(e.keyCode === 39){
+                if(forceDirection === Right){
+                    forceDirection = -1;
+                }
+            }
+            if(e.keyCode === 40){
+                if(forceDown === Down){
+                    forceDown = -1;
+                }
+            }
+
+            if(e.keyCode === 90){
+                if(rotateDirection = CL){
+                    rotateDirection = -1;
+                }
+            }
+            if (e.keyCode === 88){
+                if(rotateDirection = CCL){
+                    rotateDirection = 1;
+                }
+            }
+        }
+
+
+
+
         let freeBodies = [ground];
         let currBody
         let collisionFlag = 0;
@@ -172,7 +229,6 @@ function main(){
 
         Events.on(runner, 'afterTick', function(){
             freeBodies.forEach(body => {Body.applyForce(body, body.position, {x : 0, y : body.mass * 0.001})})
-            tick++;
             if (addBodyFlag){
                 addBodyFlag = 0
                 currBody = customShape(Object.values(tetris)[Math.floor(Math.random() * Object.keys(tetris).length)]);
@@ -183,6 +239,27 @@ function main(){
                 freeBodies.push(currBody)
                 addBodyFlag = 1;
             }
+            if(forceDirection === Left){
+                Body.applyForce(currBody, currBody.position, {x : -currBody.mass * 0.001, y : 0})
+                
+            }
+            else if(forceDirection === Right){
+                Body.applyForce(currBody, currBody.position, {x : currBody.mass * 0.001, y : 0});
+            }
+
+            if(forceDown === Down){
+                Body.applyForce(currBody, currBody.position, {x : 0, y : currBody.mass * 0.001});
+            }
+
+            if(rotateDirection === CL){
+                Body.rotate(currBody, -0.1);
+            }
+            else if(rotateDirection === CCL){
+                Body.rotate(currBody, 0.1);
+            }
+
+
+            
         })
         
         // function isValidCollision(turn, pair){
