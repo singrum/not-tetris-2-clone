@@ -85,8 +85,10 @@ function main(){
         
         const offset = {x : (window_w - frame_w)/2, y : -100};
         let ground = Bodies.rectangle(window_w/2, window_h , frame_w, floor_h, { isStatic: true, render : {fillStyle: "#000000", lineWidth: 0}});
-        let leftWall = Bodies.rectangle((window_w - frame_w)/4, window_h / 2, (window_w - frame_w)/2,window_h, { isStatic: true, friction : 0, render : {fillStyle: "#000000", lineWidth: 0}});
-        let rightWall = Bodies.rectangle(window_w - (window_w - frame_w)/4, window_h / 2,(window_w - frame_w)/2,window_h,{ isStatic: true, friction : 0, render : {fillStyle: "#000000", lineWidth: 0}});
+        let leftWall = Bodies.rectangle((window_w - frame_w)/4, window_h / 2, (window_w - frame_w)/2,window_h, { isStatic: true, render : {fillStyle: "#000000", lineWidth: 0}});
+        leftWall.friction = 0;
+        let rightWall = Bodies.rectangle(window_w - (window_w - frame_w)/4, window_h / 2,(window_w - frame_w)/2,window_h,{ isStatic: true, friction : 0, render : {fillStyle: "#000000", lineWidth: 0}});        leftWall.friction = 0;
+        rightWall.friction = 0;
         Composite.add(world, ground)
         Composite.add(world, leftWall)
         Composite.add(world, rightWall)
@@ -232,6 +234,7 @@ function main(){
             if (addBodyFlag){
                 addBodyFlag = 0
                 currBody = customShape(Object.values(tetris)[Math.floor(Math.random() * Object.keys(tetris).length)]);
+                
                 Body.setVelocity(currBody, {x : 0, y : 3});
                 Composite.add(world, currBody);                    
             }
