@@ -223,7 +223,7 @@ function main(){
 
         let freeBodies = [ground];
         let currBody
-        let collisionFlag = 0;
+        let checkLineFlag = 0;
         let addBodyFlag = 1;
         let tick =0;
 
@@ -247,6 +247,7 @@ function main(){
             if(isValidCollide(currBody)){
                 freeBodies.push(currBody)
                 addBodyFlag = 1;
+                checkLineFlag = 1;
             }
             if(forceDirection === Left){
                 Body.applyForce(currBody, currBody.position, {x : -currBody.mass * 0.001, y : 0});
@@ -267,6 +268,9 @@ function main(){
                 Body.rotate(currBody, 0.1);
             }
 
+            if(checkLineFlag){
+                checkLineFlag = 0;
+            }
 
             
         })
