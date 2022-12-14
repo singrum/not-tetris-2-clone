@@ -44,7 +44,7 @@ function main(){
         
         // create an engine
         const engine = Engine.create({
-                gravity : {x : 0, y : 0, scale : 0.001}
+                gravity : {x : 0, y : 1, scale : 0.001}
             }
         ),
                 world = engine.world;
@@ -68,7 +68,9 @@ function main(){
         function customShape(shapeOption) {
             let vertices = Matter.Vertices.fromPath(shapeOption.shape);
             return Matter.Bodies.fromVertices(shapeOption.pos.x, shapeOption.pos.y, vertices, {
-                frictionAir : 0,
+                frictionAir : 0.1,
+                friction : 0.1,
+                frictionStatic : 0.3,
                 isStatic: 0,
                 render : {fillStyle: shapeOption.color}
             });
@@ -85,6 +87,8 @@ function main(){
         
         const offset = {x : (window_w - frame_w)/2, y : -100};
         let ground = Bodies.rectangle(window_w/2, window_h , frame_w, floor_h, { isStatic: true, render : {fillStyle: "#000000", lineWidth: 0}});
+        ground.friction = 0.1;
+        ground.frictionStatic = 0.3;
         let leftWall = Bodies.rectangle((window_w - frame_w)/4, window_h / 2, (window_w - frame_w)/2,window_h, { isStatic: true, render : {fillStyle: "#000000", lineWidth: 0}});
         leftWall.friction = 0;
         let rightWall = Bodies.rectangle(window_w - (window_w - frame_w)/4, window_h / 2,(window_w - frame_w)/2,window_h,{ isStatic: true, friction : 0, render : {fillStyle: "#000000", lineWidth: 0}});        leftWall.friction = 0;
@@ -92,7 +96,7 @@ function main(){
         Composite.add(world, ground)
         Composite.add(world, leftWall)
         Composite.add(world, rightWall)
-        console.log(leftWall)
+        console.log(ground)
         
         
         
@@ -230,20 +234,22 @@ function main(){
         }
 
         Events.on(runner, 'afterTick', function(){
-            freeBodies.forEach(body => {Body.applyForce(body, body.position, {x : 0, y : body.mass * 0.001})})
+            // freeBodies.forEach(body => {Body.applyForce(body, body.position, {x : 0, y : body.mass * 0.001})})
             if (addBodyFlag){
                 addBodyFlag = 0
                 currBody = customShape(Object.values(tetris)[Math.floor(Math.random() * Object.keys(tetris).length)]);
                 
-                Body.setVelocity(currBody, {x : 0, y : 3});
-                Composite.add(world, currBody);                    
+                Body.setVelocity(currBody, {x : 0, y : 5});
+                Composite.add(world, currBody);     
+                          
             }
+            
             if(isValidCollide(currBody)){
                 freeBodies.push(currBody)
                 addBodyFlag = 1;
             }
             if(forceDirection === Left){
-                Body.applyForce(currBody, currBody.position, {x : -currBody.mass * 0.001, y : 0})
+                Body.applyForce(currBody, currBody.position, {x : -currBody.mass * 0.001, y : 0});
                 
             }
             else if(forceDirection === Right){
