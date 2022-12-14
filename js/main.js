@@ -44,7 +44,7 @@ function main(){
         
         // create an engine
         const engine = Engine.create({
-                gravity : {x : 0, y : 1, scale : 0.001}
+                gravity : {x : 0, y : 0, scale : 0.001}
             }
         ),
                 world = engine.world;
@@ -87,10 +87,9 @@ function main(){
         let ground = Bodies.rectangle(window_w/2, window_h , frame_w, floor_h, { isStatic: true, render : {fillStyle: "#000000", lineWidth: 0}});
         let leftWall = Bodies.rectangle((window_w - frame_w)/4, window_h / 2, (window_w - frame_w)/2,window_h, { isStatic: true, render : {fillStyle: "#000000", lineWidth: 0}});
         let rightWall = Bodies.rectangle(window_w - (window_w - frame_w)/4, window_h / 2,(window_w - frame_w)/2,window_h,{ isStatic: true, render : {fillStyle: "#000000", lineWidth: 0}});
-        
-        allBodies.push(ground);
-        allBodies.push(leftWall);
-        allBodies.push(rightWall);
+        Composite.add(world, ground)
+        Composite.add(world, leftWall)
+        Composite.add(world, rightWall)
         
         
         
@@ -159,19 +158,30 @@ function main(){
 
 
 /////////////////////////////////////////////////// events ///////////////////////////////////////////////////
-        let freeBodies = [];
+        let freeBodies = [ground];
         let currBody
         let collisionFlag = 0;
-        let newFlag = 1;
+        let addBodyFlag = 1;
+        let tick =0;
 
+        function isValidCollide(body){
+            
+            return freeBodies.some(freeBody => Matter.Collision.collides(body, freeBody));
+
+        }
 
         Events.on(runner, 'afterTick', function(){
-            if (newFlag){
-                newFlag = 0;
+            freeBodies.forEach(body => {Body.applyForce(body, body.position, {x : 0, y : body.mass * 0.001})})
+            tick++;
+            if (addBodyFlag){
+                addBodyFlag = 0
                 currBody = customShape(Object.values(tetris)[Math.floor(Math.random() * Object.keys(tetris).length)]);
-                // Body.setVelocity(currBody, {x : 0, y : 10})
-                allBodies.push(currBody);
-                Composite.add(world, allBodies);
+                Body.setVelocity(currBody, {x : 0, y : 3});
+                Composite.add(world, currBody);                    
+            }
+            if(isValidCollide(currBody)){
+                freeBodies.push(currBody)
+                addBodyFlag = 1;
             }
         })
         
@@ -179,10 +189,10 @@ function main(){
         //     let bodiesInPair = [pair.bodyA, pair.bodyB]
         //     return turn.parts.some(e => bodiesInPair.includes(e) && !bodiesInPair.includes(leftWall) && !bodiesInPair.includes(rightWall))
         // }
-        Events.on(engine, 'collisionStart', function(event) {
-            newFlag = 1;
-            freeBodies.push(currBody)
-        });
+        // Events.on(engine, 'collisionStart', function(event) {
+        //     newFlag = 1;
+        //     freeBodies.push(currBody)
+        // });
 
     
 }
