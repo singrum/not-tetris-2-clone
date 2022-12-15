@@ -83,7 +83,9 @@ function main(){
         const window_h = window.innerHeight;
         const frame_h = window_h - floor_h;
         const frame_w = frameRatio * frame_h;
+        const frame_offset = {x : (window_w - frame_w)/2, y : floor_h};
         const unit = frame_h / 21;
+        const unit_h = 21, unit_w = 9;
         
         const offset = {x : (window_w - frame_w)/2, y : -100};
         let ground = Bodies.rectangle(window_w/2, window_h , frame_w, floor_h, { isStatic: true, render : {fillStyle: "#000000", lineWidth: 0}});
@@ -217,7 +219,13 @@ function main(){
             }
         }
 
-
+        
+        function line(index){
+            return {
+                bottom : unit * (21 - index),
+                top : unit * (20 - index)
+            }
+        }
 
 
         let freeBodies = [ground];
@@ -225,11 +233,27 @@ function main(){
         let checkLineFlag = 0;
         let addBodyFlag = 1;
         let tick =0;
+        
+
 
         function isValidCollide(body){
             
             return freeBodies.some(freeBody => Matter.Collision.collides(body, freeBody));
 
+        }
+
+        function bodyToArr(body){
+            let result = [];
+            body.vertices.forEach(vertex => {
+                result.push(vertex.x);
+                result.push(vertex.y);
+            })
+            return result;
+        }
+
+        function arrToBody(arr){
+            let result = [];
+            
         }
 
         Events.on(runner, 'afterTick', function(){
@@ -240,7 +264,7 @@ function main(){
                 
                 Body.setVelocity(currBody, {x : 0, y : 5});
                 Composite.add(world, currBody);     
-                          
+                console.log(currBody)
             }
             
             if(isValidCollide(currBody)){
@@ -271,19 +295,20 @@ function main(){
 
             if(checkLineFlag){
                 checkLineFlag = 0;
+                for(let i = 0; i<21; i++){
+                    freeBodies.forEach((freeBody, index, arr) =>{
+                            let slices = PolyK.Slice(bodyToArr(freeBody), frame_offset.x, line(i).bottom, frame_offset.x + frame_w, line(i).bottom)
+                            
+                            Composite.remove(world, freeBody);
+                            Composite.add(world, )
+                        }
+                    )
+                }
+
             }
 
             
         })
-        
-        // function isValidCollision(turn, pair){
-        //     let bodiesInPair = [pair.bodyA, pair.bodyB]
-        //     return turn.parts.some(e => bodiesInPair.includes(e) && !bodiesInPair.includes(leftWall) && !bodiesInPair.includes(rightWall))
-        // }
-        // Events.on(engine, 'collisionStart', function(event) {
-        //     newFlag = 1;
-        //     freeBodies.push(currBody)
-        // });
 
     
 }
