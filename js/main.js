@@ -66,14 +66,26 @@ function main(){
         
         
         function customShape(shapeOption) {
-            let vertices = Matter.Vertices.fromPath(shapeOption.shape);
-            return Matter.Bodies.fromVertices(shapeOption.pos.x, shapeOption.pos.y, vertices, {
-                frictionAir : 0.1,
-                friction : 0.2,
-                frictionStatic : 0.3,
-                isStatic: 0,
-                render : {fillStyle: shapeOption.color}
-            });
+            let vertices = Vertices.fromPath(shapeOption.shape);
+            let centre = Vertices.centre(vertices);
+            if(! shapeOption.pos) {
+                return Bodies.fromVertices(centre.x, centre.y, vertices, {
+                    frictionAir : 0.1,
+                    friction : 0.2,
+                    frictionStatic : 0.3,
+                    isStatic: 0,
+                    render : {fillStyle: shapeOption.color}
+                })
+            }
+            else {
+                return Bodies.fromVertices(shapeOption.pos.x, shapeOption.pos.y, vertices, {
+                    frictionAir : 0.1,
+                    friction : 0.2,
+                    frictionStatic : 0.3,
+                    isStatic: 0,
+                    render : {fillStyle: shapeOption.color}
+                })
+            }
         }
         
         //frame 7 : 3
@@ -252,19 +264,25 @@ function main(){
         }
 
         function arrToBody(arr){
-            let result = [];
-            
+            let shape1 = ``;
+            for(let i = 0; i<arr.length; i+=2){
+                shape1 = shape1.concat(`${arr[i]},${arr[i + 1]} `)
+            }
+            return customShape({
+                shape : shape1,
+                color : '#8bd346'
+            });
+
         }
 
         Events.on(runner, 'afterTick', function(){
-            // freeBodies.forEach(body => {Body.applyForce(body, body.position, {x : 0, y : body.mass * 0.001})})
+
             if (addBodyFlag){
                 addBodyFlag = 0
                 currBody = customShape(Object.values(tetris)[Math.floor(Math.random() * Object.keys(tetris).length)]);
                 
                 Body.setVelocity(currBody, {x : 0, y : 5});
                 Composite.add(world, currBody);     
-                console.log(currBody)
             }
             
             if(isValidCollide(currBody)){
@@ -295,15 +313,21 @@ function main(){
 
             if(checkLineFlag){
                 checkLineFlag = 0;
+                let newArr = [ground];
                 for(let i = 0; i<21; i++){
-                    freeBodies.forEach((freeBody, index, arr) =>{
-                            let slices = PolyK.Slice(bodyToArr(freeBody), frame_offset.x, line(i).bottom, frame_offset.x + frame_w, line(i).bottom)
-                            
+                    freeBodies.forEach((freeBody) =>{
+                        if(freeBody !== ground){
+                            let piece = arrToBody(PolyK.Slice(bodyToArr(freeBody), 0, line(i).bottom, window_w, line(i).bottom));
+                            console.log(`line : ${i}`)
+                            console.log(freeBody)
+                            console.log(PolyK.Slice(bodyToArr(freeBody), 0, line(i).bottom, window_w, line(i).bottom))
+                            newArr.push(piece);
                             Composite.remove(world, freeBody);
-                            Composite.add(world, )
+                            Composite.add(world, piece);
                         }
-                    )
+                    })
                 }
+                freeBodies = newArr;
 
             }
 
