@@ -96,7 +96,6 @@ function main(){
         Composite.add(world, ground)
         Composite.add(world, leftWall)
         Composite.add(world, rightWall)
-        console.log(ground)
         
         
         
@@ -206,12 +205,12 @@ function main(){
                 }
             }
 
-            if(e.keyCode === 90){
+            if(e.keyCode === 88){
                 if(rotateDirection = CL){
                     rotateDirection = -1;
                 }
             }
-            if (e.keyCode === 88){
+            if (e.keyCode === 90){
                 if(rotateDirection = CCL){
                     rotateDirection = 1;
                 }
@@ -250,22 +249,24 @@ function main(){
                 checkLineFlag = 1;
             }
             if(forceDirection === Left){
-                Body.applyForce(currBody, currBody.position, {x : -currBody.mass * 0.001, y : 0});
+                Body.applyForce(currBody, currBody.position, {x : -currBody.mass * 0.002, y : 0});
                 
             }
             else if(forceDirection === Right){
-                Body.applyForce(currBody, currBody.position, {x : currBody.mass * 0.001, y : 0});
+                Body.applyForce(currBody, currBody.position, {x : currBody.mass * 0.002, y : 0});
             }
 
             if(forceDown === Down){
-                Body.applyForce(currBody, currBody.position, {x : 0, y : currBody.mass * 0.001});
+                Body.applyForce(currBody, currBody.position, {x : 0, y : currBody.mass * 0.002});
             }
 
             if(rotateDirection === CL){
-                Body.rotate(currBody, -0.1);
+                Body.applyForce(currBody, currBody.position, {x : currBody.mass * 0.001, y : 0});
+                Body.applyForce(currBody, {x : currBody.position.x, y : currBody.position.y + unit}, {x : -currBody.mass * 0.001, y : 0});
             }
             else if(rotateDirection === CCL){
-                Body.rotate(currBody, 0.1);
+                Body.applyForce(currBody, currBody.position, {x : -currBody.mass * 0.001, y : 0});
+                Body.applyForce(currBody, {x : currBody.position.x, y : currBody.position.y + unit}, {x : currBody.mass * 0.001, y : 0});
             }
 
             if(checkLineFlag){
