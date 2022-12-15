@@ -69,7 +69,7 @@ function main(){
             let vertices = Matter.Vertices.fromPath(shapeOption.shape);
             return Matter.Bodies.fromVertices(shapeOption.pos.x, shapeOption.pos.y, vertices, {
                 frictionAir : 0.1,
-                friction : 0.1,
+                friction : 0.2,
                 frictionStatic : 0.3,
                 isStatic: 0,
                 render : {fillStyle: shapeOption.color}
@@ -87,7 +87,7 @@ function main(){
         
         const offset = {x : (window_w - frame_w)/2, y : -100};
         let ground = Bodies.rectangle(window_w/2, window_h , frame_w, floor_h, { isStatic: true, render : {fillStyle: "#000000", lineWidth: 0}});
-        ground.friction = 0.1;
+        ground.friction = 0.2;
         ground.frictionStatic = 0.3;
         let leftWall = Bodies.rectangle((window_w - frame_w)/4, window_h / 2, (window_w - frame_w)/2,window_h, { isStatic: true, render : {fillStyle: "#000000", lineWidth: 0}});
         leftWall.friction = 0;
@@ -181,10 +181,10 @@ function main(){
                 forceDown = Down;
             }
 
-            if(e.keyCode === 90){
+            if(e.keyCode === 88){
                 rotateDirection = CL;
             }
-            if (e.keyCode === 88){
+            if (e.keyCode === 90){
                 rotateDirection = CCL;
             }
         }
@@ -261,12 +261,12 @@ function main(){
             }
 
             if(rotateDirection === CL){
-                Body.applyForce(currBody, currBody.position, {x : currBody.mass * 0.001, y : 0});
-                Body.applyForce(currBody, {x : currBody.position.x, y : currBody.position.y + unit}, {x : -currBody.mass * 0.001, y : 0});
+                Body.applyForce(currBody, currBody.position, {x : currBody.mass * 0.002, y : 0});
+                Body.applyForce(currBody, {x : currBody.position.x, y : currBody.position.y + unit}, {x : -currBody.mass * 0.002, y : 0});
             }
             else if(rotateDirection === CCL){
-                Body.applyForce(currBody, currBody.position, {x : -currBody.mass * 0.001, y : 0});
-                Body.applyForce(currBody, {x : currBody.position.x, y : currBody.position.y + unit}, {x : currBody.mass * 0.001, y : 0});
+                Body.applyForce(currBody, currBody.position, {x : -currBody.mass * 0.002, y : 0});
+                Body.applyForce(currBody, {x : currBody.position.x, y : currBody.position.y + unit}, {x : currBody.mass * 0.002, y : 0});
             }
 
             if(checkLineFlag){
