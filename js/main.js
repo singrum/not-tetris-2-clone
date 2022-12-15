@@ -319,7 +319,9 @@ function main(){
                         if(freeBody !== ground){
                             let piece = arrToBody(PolyK.Slice(bodyToArr(freeBody), 0, line(i).bottom, window_w, line(i).bottom));
                             console.log(`line : ${i}`)
+                            console.log(line(i).bottom)
                             console.log(freeBody)
+
                             console.log(PolyK.Slice(bodyToArr(freeBody), 0, line(i).bottom, window_w, line(i).bottom))
                             newArr.push(piece);
                             Composite.remove(world, freeBody);
