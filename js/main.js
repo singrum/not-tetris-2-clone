@@ -61,8 +61,6 @@ function main(){
             background: "transparent"
             }
         });
-        engine.positionIterations = 10
-        let allBodies = []
         
         
         function customShape(shapeOption) {
@@ -100,7 +98,7 @@ function main(){
         const unit_h = 21, unit_w = 9;
         
         const offset = {x : (window_w - frame_w)/2, y : -100};
-        let ground = Bodies.rectangle(window_w/2, window_h , frame_w, floor_h, { isStatic: true, render : {fillStyle: "#000000", lineWidth: 0}});
+        let ground = Bodies.rectangle(window_w/2, window_h - floor_h/2 , frame_w, floor_h, { isStatic: true, render : {fillStyle: "#000000", lineWidth: 0}});
         ground.friction = 0.2;
         ground.frictionStatic = 0.3;
         let leftWall = Bodies.rectangle((window_w - frame_w)/4, window_h / 2, (window_w - frame_w)/2,window_h, { isStatic: true, render : {fillStyle: "#000000", lineWidth: 0}});
@@ -114,7 +112,7 @@ function main(){
         
         
         //object
-        Common.setDecomp;
+        Common.setDecomp(decomp)
 
         let tetris = {
             I : {
@@ -275,6 +273,11 @@ function main(){
 
         }
 
+        function point(x, y){
+            let rect = Bodies.rectangle(x,y, 5,5, {isStatic: true, render : {fillStyle : "#ff0000", strokeStyle: 0}});
+            Composite.add(world, rect);
+        }
+
         Events.on(runner, 'afterTick', function(){
 
             if (addBodyFlag){
@@ -314,18 +317,22 @@ function main(){
             if(checkLineFlag){
                 checkLineFlag = 0;
                 let newArr = [ground];
-                for(let i = 0; i<21; i++){
+                for(let i = 1; i<2; i++){
                     freeBodies.forEach((freeBody) =>{
                         if(freeBody !== ground){
-                            let piece = arrToBody(PolyK.Slice(bodyToArr(freeBody), 0, line(i).bottom, window_w, line(i).bottom));
+                            Composite.remove(world, freeBody);
+                            let slice = PolyK.Slice(bodyToArr(freeBody), 0, line(i).bottom, window_w, line(i).bottom)
+                            slice.forEach(x=>{
+                                let piece = arrToBody(x)
+                                newArr.push(piece);
+                                Composite.add(world, piece);})
                             console.log(`line : ${i}`)
                             console.log(line(i).bottom)
                             console.log(freeBody)
-
+                            point(frame_offset.x, line(i).bottom);
+                            
                             console.log(PolyK.Slice(bodyToArr(freeBody), 0, line(i).bottom, window_w, line(i).bottom))
-                            newArr.push(piece);
-                            Composite.remove(world, freeBody);
-                            Composite.add(world, piece);
+                            
                         }
                     })
                 }
