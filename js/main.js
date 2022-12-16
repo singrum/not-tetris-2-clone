@@ -63,19 +63,17 @@ function main(){
         });
         
         
-        function customShape(shapeOption) {
-            let centre = Vertices.centre(shapeOption.vertices);
+        function customShape(shapeOption, static = false) {
+            let centre = Vertices.mean(shapeOption.vertices);
             let result;
             if(! shapeOption.pos) {
                 result = Bodies.fromVertices(centre.x, centre.y, shapeOption.vertices, {
                     frictionAir : 0.1,
                     friction : 0.2,
                     frictionStatic : 0.3,
-                    isStatic: 0,
+                    isStatic: static,
                     render : {fillStyle: shapeOption.color}
                 })
-                result.raw_vertices = shapeOption.vertices;
-                return result;
             }
             else {
                 result = Bodies.fromVertices(shapeOption.pos.x, shapeOption.pos.y, shapeOption.vertices, {
@@ -85,9 +83,10 @@ function main(){
                     isStatic: 0,
                     render : {fillStyle: shapeOption.color}
                 })
-                result.raw_vertices = shapeOption.vertices;
-                return result;
-            }
+
+            }                
+            result.raw_vertices = shapeOption.vertices;
+            return result;
         }
         function verticesToArr(vertices){
             let result = [];
@@ -103,12 +102,11 @@ function main(){
             for(let i = 0; i<arr.length; i+=2){
                 shape = shape.concat(`${arr[i]},${arr[i + 1]} `)
             }
-            Vertices.fromPath(shape)
+            return Vertices.fromPath(shape)
 
         }
         
         function verticesSlice(vertices, lineIndex){
-            console.log(verticesToArr(vertices))
             let slice = PolyK.Slice(verticesToArr(vertices), 0,line(lineIndex).bottom, window_w, line(lineIndex).bottom);
             return slice.map(piece=>arrToVertices(piece));
 
@@ -312,17 +310,12 @@ function main(){
                 addBodyFlag = 0
                 currBody = customShape(Object.values(tetris)[Math.floor(Math.random() * Object.keys(tetris).length)]);
                 
-                currBody.vertices.forEach(v=>{point(v.x, v.y)})
-                console.log(currBody)
+                // currBody.vertices.forEach(v=>{point(v.x, v.y)})
                 Body.setVelocity(currBody, {x : 0, y : 5});
                 Composite.add(world, currBody);     
             }
             
-            if(isValidCollide(currBody)){
-                freeBodies.push(currBody)
-                addBodyFlag = 1;
-                checkLineFlag = 1;
-            }
+
             if(forceDirection === Left){
                 Body.applyForce(currBody, currBody.position, {x : -currBody.mass * 0.002, y : 0});
                 
@@ -351,17 +344,46 @@ function main(){
                     freeBodies.forEach((freeBody) =>{
                         if(freeBody !== ground){
                             Composite.remove(world, freeBody);
-                            Vertices.translate(freeBody.raw_vertices, freeBody.position);
-                            Vertices.rotate(freeBody.raw_vertices, freeBody.angle, freeBody.position);
 
-                            freeBody.raw_vertices.
+                            console.log(Vertices.centre(freeBody.raw_vertices));
+                            Vertices.rotate(freeBody.raw_vertices, freeBody.angle, Vertices.mean(freeBody.raw_vertices));
+                            
+                            Vertices.translate(freeBody.raw_vertices, {x : freeBody.position.x - Vertices.mean(freeBody.raw_vertices).x, y : freeBody.position.y - Vertices.mean(freeBody.raw_vertices).y});
+                            
+                            
+                            //debug
+                            
+                            let clone = customShape(
+                                {
+                                    vertices : freeBody.raw_vertices,
+                                    color : "#ff0000"
+                                },true
+                            )
+                            Composite.add(world, customShape(
+                                {
+                                    vertices : freeBody.raw_vertices,
+                                    color : "#ff0000"
+                                },true
+                            )
+                            )
+                            newArr.push(clone)
+
+
+
+                            console.log(freeBody.raw_vertices, freeBody.vertices)
                             console.log(verticesSlice(freeBody.raw_vertices, i))
-                            // verticesSlice(freeBody.raw_vertices, i).forEach(
-                            //     customShape({
-                            //         ver
-                            //     })
-                            // )
-                            point(frame_offset.x, line(i).bottom);
+
+                            verticesSlice(freeBody.raw_vertices, i).forEach(vertex=>{
+                                let piece = customShape(
+                                    {
+                                        vertices : vertex,
+                                        color : freeBody.render.fillStyle
+                                    }, true
+                                )
+                                newArr.push(piece)
+                                Composite.add(world, piece);
+                            })
+                            // point(frame_offset.x, line(i).bottom);
                             
                             
                         }
@@ -369,6 +391,12 @@ function main(){
                 }
                 freeBodies = newArr;
 
+            }
+            if(isValidCollide(currBody)){
+                checkLineFlag = 1;
+                freeBodies.push(currBody)
+                addBodyFlag = 1;
+                checkLineFlag = 1;
             }
 
             
