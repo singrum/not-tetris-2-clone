@@ -64,28 +64,56 @@ function main(){
         
         
         function customShape(shapeOption) {
-            let vertices = Vertices.fromPath(shapeOption.shape);
-            let centre = Vertices.centre(vertices);
+            let centre = Vertices.centre(shapeOption.vertices);
+            let result;
             if(! shapeOption.pos) {
-                return Bodies.fromVertices(centre.x, centre.y, vertices, {
+                result = Bodies.fromVertices(centre.x, centre.y, shapeOption.vertices, {
                     frictionAir : 0.1,
                     friction : 0.2,
                     frictionStatic : 0.3,
                     isStatic: 0,
                     render : {fillStyle: shapeOption.color}
                 })
+                result.raw_vertices = shapeOption.vertices;
+                return result;
             }
             else {
-                return Bodies.fromVertices(shapeOption.pos.x, shapeOption.pos.y, vertices, {
+                result = Bodies.fromVertices(shapeOption.pos.x, shapeOption.pos.y, shapeOption.vertices, {
                     frictionAir : 0.1,
                     friction : 0.2,
                     frictionStatic : 0.3,
                     isStatic: 0,
                     render : {fillStyle: shapeOption.color}
                 })
+                result.raw_vertices = shapeOption.vertices;
+                return result;
             }
         }
+        function verticesToArr(vertices){
+            let result = [];
+            vertices.forEach(vertex => {
+                result.push(vertex.x);
+                result.push(vertex.y);
+            })
+            return result;
+        }
+
+        function arrToVertices(arr){
+            let shape = ``;
+            for(let i = 0; i<arr.length; i+=2){
+                shape = shape.concat(`${arr[i]},${arr[i + 1]} `)
+            }
+            Vertices.fromPath(shape)
+
+        }
         
+        function verticesSlice(vertices, lineIndex){
+            console.log(verticesToArr(vertices))
+            let slice = PolyK.Slice(verticesToArr(vertices), 0,line(lineIndex).bottom, window_w, line(lineIndex).bottom);
+            return slice.map(piece=>arrToVertices(piece));
+
+        }
+
         //frame 7 : 3
         const floor_h = 200;
         const frameRatio = 3/7;
@@ -97,7 +125,7 @@ function main(){
         const unit = frame_h / 21;
         const unit_h = 21, unit_w = 9;
         
-        const offset = {x : (window_w - frame_w)/2, y : -100};
+        const offset = {x : (window_w - frame_w)/2, y : 100};
         let ground = Bodies.rectangle(window_w/2, window_h - floor_h/2 , frame_w, floor_h, { isStatic: true, render : {fillStyle: "#000000", lineWidth: 0}});
         ground.friction = 0.2;
         ground.frictionStatic = 0.3;
@@ -116,37 +144,37 @@ function main(){
 
         let tetris = {
             I : {
-                shape : `0,0 0,${unit} ${unit * 4},${unit} ${unit * 4},0`,
+                vertices : Vertices.fromPath(`0,0 0,${unit} ${unit * 4},${unit} ${unit * 4},0`),
                 color : '#9b5fe0',
                 pos : {x : offset.x + unit*4, y : offset.y}
             },
             O : {
-                shape : `0,0 0,${unit * 2} ${unit * 2},${unit * 2} ${unit * 2},0`,
+                vertices : Vertices.fromPath(`0,0 0,${unit * 2} ${unit * 2},${unit * 2} ${unit * 2},0`),
                 color : '#16a4d8',
                 pos : {x : offset.x + unit * 4, y : offset.y}
             },
             T : {
-                shape : `0,0 0,${unit} ${unit},${unit} ${unit},${unit * 2} ${unit * 2},${unit * 2} ${unit * 2},${unit} ${unit * 3},${unit} ${unit * 3},0`,
+                vertices : Vertices.fromPath(`0,0 0,${unit} ${unit},${unit} ${unit},${unit * 2} ${unit * 2},${unit * 2} ${unit * 2},${unit} ${unit * 3},${unit} ${unit * 3},0`),
                 color : '#60dbe8',
                 pos : {x : offset.x + unit * 7/2, y : offset.y}
             },
             J : {
-                shape : `${unit},0 ${unit},${unit*2} 0,${unit*2} 0,${unit*3} ${unit*2},${unit*3} ${unit*2},0`,
+                vertices : Vertices.fromPath(`${unit},0 ${unit},${unit*2} 0,${unit*2} 0,${unit*3} ${unit*2},${unit*3} ${unit*2},0`),
                 color : '#8bd346',
                 pos : {x : window_w/2, y : offset.y}
             },
             L : {
-                shape : `0,0 0,${unit*3} ${unit*2},${unit*3} ${unit*2},${unit*2} ${unit},${unit*2} ${unit},0`,
+                vertices : Vertices.fromPath(`0,0 0,${unit*3} ${unit*2},${unit*3} ${unit*2},${unit*2} ${unit},${unit*2} ${unit},0`),
                 color : '#efdf48',
                 pos : {x : window_w/2, y : offset.y}
             },
             S : {
-                shape : `${unit},0 ${unit},${unit} 0,${unit} 0,${unit*2} ${unit*2},${unit*2} ${unit*2},${unit} ${unit*3},${unit} ${unit*3},0`,
+                vertices : Vertices.fromPath(`${unit},0 ${unit},${unit} 0,${unit} 0,${unit*2} ${unit*2},${unit*2} ${unit*2},${unit} ${unit*3},${unit} ${unit*3},0`),
                 color : '#f9a52c',
                 pos : {x : window_w/2, y : offset.y}
             },
             Z : {
-                shape : `0,0 0,${unit} ${unit},${unit} ${unit},${unit*2} ${unit*3},${unit*2} ${unit*3},${unit} ${unit*2},${unit} ${unit*2},0`,
+                vertices : Vertices.fromPath(`0,0 0,${unit} ${unit},${unit} ${unit},${unit*2} ${unit*3},${unit*2} ${unit*3},${unit} ${unit*2},${unit} ${unit*2},0`),
                 color : '#d64e12',
                 pos : {x : window_w/2, y : offset.y}
             }
@@ -284,6 +312,8 @@ function main(){
                 addBodyFlag = 0
                 currBody = customShape(Object.values(tetris)[Math.floor(Math.random() * Object.keys(tetris).length)]);
                 
+                currBody.vertices.forEach(v=>{point(v.x, v.y)})
+                console.log(currBody)
                 Body.setVelocity(currBody, {x : 0, y : 5});
                 Composite.add(world, currBody);     
             }
@@ -321,17 +351,14 @@ function main(){
                     freeBodies.forEach((freeBody) =>{
                         if(freeBody !== ground){
                             Composite.remove(world, freeBody);
-                            let slice = PolyK.Slice(bodyToArr(freeBody), 0, line(i).bottom, window_w, line(i).bottom)
-                            slice.forEach(x=>{
-                                let piece = arrToBody(x)
-                                newArr.push(piece);
-                                Composite.add(world, piece);})
-                            console.log(`line : ${i}`)
-                            console.log(line(i).bottom)
-                            console.log(freeBody)
+                            console.log(verticesSlice(freeBody.raw_vertices, i))
+                            // verticesSlice(freeBody.raw_vertices, i).forEach(
+                            //     customShape({
+                            //         ver
+                            //     })
+                            // )
                             point(frame_offset.x, line(i).bottom);
                             
-                            console.log(PolyK.Slice(bodyToArr(freeBody), 0, line(i).bottom, window_w, line(i).bottom))
                             
                         }
                     })
