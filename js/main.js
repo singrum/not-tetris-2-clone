@@ -351,6 +351,10 @@ function main(){
                     freeBodies.forEach((freeBody) =>{
                         if(freeBody !== ground){
                             Composite.remove(world, freeBody);
+                            Vertices.translate(freeBody.raw_vertices, freeBody.position);
+                            Vertices.rotate(freeBody.raw_vertices, freeBody.angle, freeBody.position);
+
+                            freeBody.raw_vertices.
                             console.log(verticesSlice(freeBody.raw_vertices, i))
                             // verticesSlice(freeBody.raw_vertices, i).forEach(
                             //     customShape({
