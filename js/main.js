@@ -63,6 +63,7 @@ function main(){
         });
         
         
+        
         function customShape(shapeOption, static = false) {
             let centre = Vertices.mean(shapeOption.vertices);
             let result;
@@ -80,12 +81,15 @@ function main(){
                     frictionAir : 0.1,
                     friction : 0.2,
                     frictionStatic : 0.3,
-                    isStatic: 0,
+                    isStatic: static,
                     render : {fillStyle: shapeOption.color}
                 })
+                
 
-            }                
+            }   
+            // Body.setCentre(result,Vertices.centre(shapeOption.vertices), true)             
             result.raw_vertices = shapeOption.vertices;
+            // result.convex_vertices = result.vertices
             return result;
         }
         function verticesToArr(vertices){
@@ -178,10 +182,14 @@ function main(){
             }
         };
 
-        // let turn = customShape(Object.values(tetris)[Math.floor(Math.random() * Object.keys(tetris).length)])
-        // Body.setVelocity(turn, {x : 0, y : 3})
-        // bodies.push(turn);
-        // Composite.add(world, bodies);
+
+
+        // let s = customShape(tetris.L, true)
+        // Composite.add(world, s)
+        // console.log(s)
+
+
+
 
         Render.run(render);
         let runner = Runner.create();
@@ -353,32 +361,29 @@ function main(){
                             
                             //debug
                             
-                            let clone = customShape(
-                                {
-                                    vertices : freeBody.raw_vertices,
-                                    color : "#ff0000"
-                                },true
-                            )
-                            Composite.add(world, customShape(
-                                {
-                                    vertices : freeBody.raw_vertices,
-                                    color : "#ff0000"
-                                },true
-                            )
-                            )
-                            newArr.push(clone)
+                            // let clone = customShape(
+                            //     {
+                            //         vertices : freeBody.raw_vertices,
+                            //         color : "#ff0000"
+                            //     },true
+                            // )
+                            // Composite.add(world, customShape(
+                            //     {
+                            //         vertices : freeBody.raw_vertices,
+                            //         color : "#ff0000"
+                            //     },true
+                            // )
+                            // )
+                            // newArr.push(clone)
 
 
-
-                            console.log(freeBody.raw_vertices, freeBody.vertices)
-                            console.log(verticesSlice(freeBody.raw_vertices, i))
 
                             verticesSlice(freeBody.raw_vertices, i).forEach(vertex=>{
                                 let piece = customShape(
                                     {
                                         vertices : vertex,
                                         color : freeBody.render.fillStyle
-                                    }, true
+                                    }
                                 )
                                 newArr.push(piece)
                                 Composite.add(world, piece);
