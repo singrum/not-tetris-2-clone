@@ -147,12 +147,12 @@ function main(){
     let ver = Vertices.fromPath(`${Unit*4},0 ${Unit*4},${Unit*4} 0,${Unit*4} 0,${Unit*5} ${Unit*5},${Unit*5} ${Unit*5},0`);
     let concave = Bodies.fromVertices(300,300, ver,
         {
-            isStatic: 0,
+            isStatic: 1,
             render: {fillStyle: "#000000"}
         }
     )
     Composite.add(world, concave)
-    Composite.remove(world, concave);
+    // Composite.remove(world, concave);
 
     let s = verticesSlice(concave.vertices, 300)
     console.log(s[0], s[1])
