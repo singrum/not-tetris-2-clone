@@ -40,6 +40,25 @@ function main(){
         })
     }
 
+    function getConcaveVertices(body){
+        let coords;
+        let parts = body.parts.slice(1).map(function(part)
+            {return part.vertices.map(function(v){return {x : v.x, y : v.y}})}
+        );
+        let points;
+        if(parts.length === 0){
+            return body;
+        }
+        if(parts.length === 2){
+            points = parts[0].concat(parts[1].slice(1,length - 1))
+        }
+        if(parts.length === 3){
+            points = parts[0].concat(parts[1])
+        }
+        return Vertices.create(points, Body);
+
+    }
+
     const Engine = Matter.Engine,
         Bodies = Matter.Bodies,
         Body = Matter.Body,
@@ -139,33 +158,117 @@ function main(){
     );        
     // Composite.add(world, [floor, ceiling, leftWall, rightWall]);
 
+    class Tetris{
+        constructor(shape){
+            this.name = shape;
+            switch (shape) {
+                case "I":
+                    this.path = `0,0 0,${Unit} ${Unit * 4},${Unit} ${Unit * 4},0`;
+                    this.body = Bodies.fromVertices(300,300,Vertices.fromPath(this.path),
+                    {
+                        isStatic: 0,
+                        render: {fillStyle: '#9b5fe0'}
+                    });
+                    break;
+                case "O":
+                    this.path = `0,0 0,${Unit * 2} ${Unit * 2},${Unit * 2} ${Unit * 2},0`;
+                    this.body = Bodies.fromVertices(300,300,Vertices.fromPath(this.path),
+                    {
+                        isStatic: 0,
+                        render: {fillStyle: '#16a4d8'}
+                    });
+                    break;
+                case "T":
+                    this.path = `0,0 0,${Unit} ${Unit},${Unit} ${Unit},${Unit * 2} ${Unit * 2},${Unit * 2} ${Unit * 2},${Unit} ${Unit * 3},${Unit} ${Unit * 3},0`;
+                    this.body = Bodies.fromVertices(300,300,Vertices.fromPath(this.path),
+                    {
+                        isStatic: 0,
+                        render: {fillStyle: '#60dbe8'}
+                    });
+                    break;
+                case "J":
+                    this.path = `${Unit},0 ${Unit},${Unit*2} 0,${Unit*2} 0,${Unit*3} ${Unit*2},${Unit*3} ${Unit*2},0`;
+                    this.body = Bodies.fromVertices(300,300,Vertices.fromPath(this.path),
+                    {
+                        isStatic: 0,
+                        render: {fillStyle: '#8bd346'}
+                    });
+                    break;
+                case "L":
+                    this.path = `0,0 0,${Unit*3} ${Unit*2},${Unit*3} ${Unit*2},${Unit*2} ${Unit},${Unit*2} ${Unit},0`;
+                    this.body = Bodies.fromVertices(300,300,Vertices.fromPath(this.path),
+                    {
+                        isStatic: 0,
+                        render: {fillStyle: '#efdf48'}
+                    });
+                    break;
+                case "S":
+                    this.path = `${Unit},${Unit} ${Unit},0 ${Unit*3},0 ${Unit*3},${Unit} ${Unit*2},${Unit} ${Unit*2},${Unit*2} 0,${Unit*2} 0,${Unit}`;
+                    this.body = Bodies.fromVertices(300, 300, Vertices.fromPath(this.path),
+                    {
+                        isStatic: 0,
+                        render: {fillStyle: '#f9a52c'}
+                    });
+                    // Body.setParts(this.body,[
+                    //     Bodies.fromVertices(Unit*2, Unit/2, Vertices.fromPath(`${Unit},${Unit} ${Unit},0 ${Unit*3},0 ${Unit*3},${Unit} ${Unit*2},${Unit}`),
+                    //     {
+                    //         isStatic: 0,
+                    //         render: {fillStyle: '#f9a52c'}
+                    //     }),
+                    //     Bodies.fromVertices(Unit, Unit * 3/2, Vertices.fromPath(`${Unit*2},${Unit} ${Unit*2},${Unit*2} 0,${Unit*2} 0,${Unit} ${Unit},${Unit}`),
+                    //     {
+                    //         isStatic: 0,
+                    //         render: {fillStyle: '#f9a52c'}
+                    //     })
+                    // ]
+                    // )
+                    break;
+                case "Z":
+                    this.path = `0,0 0,${Unit} ${Unit},${Unit} ${Unit},${Unit*2} ${Unit*3},${Unit*2} ${Unit*3},${Unit} ${Unit*2},${Unit} ${Unit*2},0`;
+                    this.body = Bodies.fromVertices(Vertices.fromPath(this.path),
+                    {
+                        isStatic: 0,
+                        render: {fillStyle: '#d64e12'}
+                    });
+                    break;
+                default:
+                    return undefined;
+            }
+            
+        }
+    }
+
+
+
     function point(x, y){
         let rect = Bodies.rectangle(x,y, 5,5, {isStatic: true, render : {fillStyle : "#ff0000", strokeStyle: 0}});
         Composite.add(world, rect);
     }
+    function pointVertices(ver){
+        ver.forEach(v=>{
+            point(v.x, v.y);
+        })
+    }
     point(300,300)
-    let ver = Vertices.fromPath(`${Unit*4},0 ${Unit*4},${Unit*4} 0,${Unit*4} 0,${Unit*5} ${Unit*5},${Unit*5} ${Unit*5},0`);
-    let concave = Bodies.fromVertices(300,300, ver,
-        {
-            isStatic: 1,
-            render: {fillStyle: "#000000"}
-        }
-    )
+    let ver = Vertices.fromPath(`${Unit*3},0 ${Unit*3},${Unit} ${Unit*2},${Unit} ${Unit*2},${Unit*2} 0,${Unit*2} 0,${Unit} ${Unit},${Unit} ${Unit},0`);
+    let concave = new Tetris('S').body
+    
     Composite.add(world, concave)
+
     // Composite.remove(world, concave);
 
-    let s = verticesSlice(concave.vertices, 300)
-    console.log(s[0], s[1])
-    
+    let s = verticesSlice(getConcaveVertices(concave), 300)
+
+    // pointVertices(concave.vertices)
     s.forEach(x=>{
-        let centre =Vertices.mean(x)
+        let centre =Vertices.centre(x)
         let b = Bodies.fromVertices(centre.x,centre.y,x,{
-            isStatic:1, render: {fillStyle: "#000000"}
+            isStatic:0, render: {fillStyle: "#ff0000"}
         })
         Composite.add(world, b)
     })
-
-    console.log(world.bodies[1].vertices, world.bodies[2].vertices)
+    
+    
     // verticesSlice(concave.vertices, 300).forEach(x=>
     //     {
     //         Composite.add(world, Bodies.fromVertices(Vertices.mean(x),Vertices.mean(x),x, 
