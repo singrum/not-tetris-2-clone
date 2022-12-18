@@ -47,7 +47,7 @@ function main(){
         );
         let points;
         if(parts.length === 0){
-            return body;
+            return body.vertices;
         }
         if(parts.length === 2){
             points = parts[0].concat(parts[1].slice(1,length - 1))
@@ -163,71 +163,78 @@ function main(){
             this.name = shape;
             switch (shape) {
                 case "I":
+                case "i":
                     this.path = `0,0 0,${Unit} ${Unit * 4},${Unit} ${Unit * 4},0`;
                     this.body = Bodies.fromVertices(300,300,Vertices.fromPath(this.path),
                     {
-                        isStatic: 0,
+                        isStatic: 1,
                         render: {fillStyle: '#9b5fe0'}
                     });
                     break;
                 case "O":
+                case "o":
                     this.path = `0,0 0,${Unit * 2} ${Unit * 2},${Unit * 2} ${Unit * 2},0`;
                     this.body = Bodies.fromVertices(300,300,Vertices.fromPath(this.path),
                     {
-                        isStatic: 0,
+                        isStatic: 1,
                         render: {fillStyle: '#16a4d8'}
                     });
                     break;
                 case "T":
+                case "t":
                     this.path = `0,0 0,${Unit} ${Unit},${Unit} ${Unit},${Unit * 2} ${Unit * 2},${Unit * 2} ${Unit * 2},${Unit} ${Unit * 3},${Unit} ${Unit * 3},0`;
                     this.body = Bodies.fromVertices(300,300,Vertices.fromPath(this.path),
                     {
-                        isStatic: 0,
+                        isStatic: 1,
                         render: {fillStyle: '#60dbe8'}
                     });
                     break;
                 case "J":
+                case "j":
                     this.path = `${Unit},0 ${Unit},${Unit*2} 0,${Unit*2} 0,${Unit*3} ${Unit*2},${Unit*3} ${Unit*2},0`;
                     this.body = Bodies.fromVertices(300,300,Vertices.fromPath(this.path),
                     {
-                        isStatic: 0,
+                        isStatic: 1,
                         render: {fillStyle: '#8bd346'}
                     });
                     break;
                 case "L":
+                case "l":
                     this.path = `0,0 0,${Unit*3} ${Unit*2},${Unit*3} ${Unit*2},${Unit*2} ${Unit},${Unit*2} ${Unit},0`;
                     this.body = Bodies.fromVertices(300,300,Vertices.fromPath(this.path),
                     {
-                        isStatic: 0,
+                        isStatic: 1,
                         render: {fillStyle: '#efdf48'}
                     });
                     break;
                 case "S":
+                case "s":
                     this.path = `${Unit},${Unit} ${Unit},0 ${Unit*3},0 ${Unit*3},${Unit} ${Unit*2},${Unit} ${Unit*2},${Unit*2} 0,${Unit*2} 0,${Unit}`;
                     this.body = Bodies.fromVertices(300, 300, Vertices.fromPath(this.path),
                     {
-                        isStatic: 0,
+                        isStatic: 1,
                         render: {fillStyle: '#f9a52c'}
                     });
                     // Body.setParts(this.body,[
                     //     Bodies.fromVertices(Unit*2, Unit/2, Vertices.fromPath(`${Unit},${Unit} ${Unit},0 ${Unit*3},0 ${Unit*3},${Unit} ${Unit*2},${Unit}`),
                     //     {
-                    //         isStatic: 0,
+                    //         isStatic: 1,
                     //         render: {fillStyle: '#f9a52c'}
                     //     }),
                     //     Bodies.fromVertices(Unit, Unit * 3/2, Vertices.fromPath(`${Unit*2},${Unit} ${Unit*2},${Unit*2} 0,${Unit*2} 0,${Unit} ${Unit},${Unit}`),
                     //     {
-                    //         isStatic: 0,
+                    //         isStatic: 1,
                     //         render: {fillStyle: '#f9a52c'}
                     //     })
                     // ]
                     // )
                     break;
                 case "Z":
+                case "z":
                     this.path = `0,0 0,${Unit} ${Unit},${Unit} ${Unit},${Unit*2} ${Unit*3},${Unit*2} ${Unit*3},${Unit} ${Unit*2},${Unit} ${Unit*2},0`;
-                    this.body = Bodies.fromVertices(Vertices.fromPath(this.path),
+                    this.body = Bodies.fromVertices(300,300,Vertices.fromPath(this.path),
                     {
-                        isStatic: 0,
+                        isStatic: 1,
                         render: {fillStyle: '#d64e12'}
                     });
                     break;
@@ -249,22 +256,24 @@ function main(){
             point(v.x, v.y);
         })
     }
-    point(300,300)
-    let ver = Vertices.fromPath(`${Unit*3},0 ${Unit*3},${Unit} ${Unit*2},${Unit} ${Unit*2},${Unit*2} 0,${Unit*2} 0,${Unit} ${Unit},${Unit} ${Unit},0`);
-    let concave = new Tetris('S').body
+    // point(300,300)
+    let concave = new Tetris('z').body
     
     Composite.add(world, concave)
 
     // Composite.remove(world, concave);
-
-    let s = verticesSlice(getConcaveVertices(concave), 300)
-
+    // console.log(getConcaveVertices(concave))
+    Body.setAngle(concave, 10)
+    let s = verticesSlice(getConcaveVertices(concave), 290)
+    console.log(s[0])
     // pointVertices(concave.vertices)
-    s.forEach(x=>{
-        let centre =Vertices.centre(x)
-        let b = Bodies.fromVertices(centre.x,centre.y,x,{
-            isStatic:0, render: {fillStyle: "#ff0000"}
+    s.forEach(a=>{
+        let centre =Vertices.centre(a)
+        
+        let b = Bodies.fromVertices(centre.x,centre.y,a,{
+            isStatic:1, render: {fillStyle: "#ff0000"}
         })
+        console.log(b.vertices)
         Composite.add(world, b)
     })
     
