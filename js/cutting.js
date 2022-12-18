@@ -4,17 +4,20 @@ function main(){
         for(let i = 0; i < arr.length; i += 2){
             result = result.concat(`${arr[i]},${arr[i+1]} `);
         }
+        result = result.substring(0, result.length - 1);
+
         result = Vertices.fromPath(result);
-        console.log(result)
+        
         return result;
     }
 
     function verticesToArr(ver){
         let result = [];
-        for(let i = 0; i < ver.length; i++){
-            result.push(ver[i].x);
-            result.push(ver[i].y);
-        }
+        ver.forEach(v=>
+            {
+                result.push(v.x);
+                result.push(v.y);
+            })
         return result;
     }
 
@@ -140,28 +143,47 @@ function main(){
         let rect = Bodies.rectangle(x,y, 5,5, {isStatic: true, render : {fillStyle : "#ff0000", strokeStyle: 0}});
         Composite.add(world, rect);
     }
-    point(500,500)
+    point(300,300)
     let ver = Vertices.fromPath(`${Unit*4},0 ${Unit*4},${Unit*4} 0,${Unit*4} 0,${Unit*5} ${Unit*5},${Unit*5} ${Unit*5},0`);
-    let concave = Bodies.fromVertices(500,500, ver,
+    let concave = Bodies.fromVertices(300,300, ver,
         {
-            isStatic: 1,
+            isStatic: 0,
             render: {fillStyle: "#000000"}
         }
     )
-    concave.originVertices = ver;
-
-
-    verticesSlice(concave.vertices).forEach(x=>
-        {
-            
-        }
-    )
-    
-    
-
-
-    console.log(concave)
     Composite.add(world, concave)
+    Composite.remove(world, concave);
+
+    let s = verticesSlice(concave.vertices, 300)
+    console.log(s[0], s[1])
+    
+    s.forEach(x=>{
+        let centre =Vertices.mean(x)
+        let b = Bodies.fromVertices(centre.x,centre.y,x,{
+            isStatic:1, render: {fillStyle: "#000000"}
+        })
+        Composite.add(world, b)
+    })
+
+    console.log(world.bodies[1].vertices, world.bodies[2].vertices)
+    // verticesSlice(concave.vertices, 300).forEach(x=>
+    //     {
+    //         Composite.add(world, Bodies.fromVertices(Vertices.mean(x),Vertices.mean(x),x, 
+    //             {
+    //                 isStatic: 0,
+    //                 render: {fillStyle: "#000000"}
+    //             })
+    //             )
+    //     }
+    // )
+    
+    // console.log(world)
+    
+    
+
+
+    // console.log(concave)
+
 
 
 }

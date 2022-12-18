@@ -358,7 +358,7 @@ function main(){
                             
                             Vertices.translate(freeBody.raw_vertices, {x : freeBody.position.x - Vertices.mean(freeBody.raw_vertices).x, y : freeBody.position.y - Vertices.mean(freeBody.raw_vertices).y});
                             
-                            
+
                             //debug
                             
                             // let clone = customShape(
@@ -377,8 +377,8 @@ function main(){
                             // newArr.push(clone)
 
 
-
-                            verticesSlice(freeBody.raw_vertices, i).forEach(vertex=>{
+                            let slice = verticesSlice(freeBody.raw_vertices, i)
+                            slice.forEach(vertex=>{
                                 let piece = customShape(
                                     {
                                         vertices : vertex,
