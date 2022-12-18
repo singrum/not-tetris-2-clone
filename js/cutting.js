@@ -263,16 +263,17 @@ function main(){
 
     // Composite.remove(world, concave);
     // console.log(getConcaveVertices(concave))
-    Body.setAngle(concave, 10)
-    let s = verticesSlice(getConcaveVertices(concave), 290)
+    Body.setAngle(concave, 1)
+    let s = verticesSlice(getConcaveVertices(concave), 280)
     console.log(s[0])
     // pointVertices(concave.vertices)
     s.forEach(a=>{
         let centre =Vertices.centre(a)
         
         let b = Bodies.fromVertices(centre.x,centre.y,a,{
-            isStatic:1, render: {fillStyle: "#ff0000"}
+            isStatic:1, render: {fillStyle: "#000000"}
         })
+        
         console.log(b.vertices)
         Composite.add(world, b)
     })
