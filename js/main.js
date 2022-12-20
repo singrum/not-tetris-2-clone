@@ -72,8 +72,26 @@ function main(){
             body.friction = f;
             body.frictionStatic = fs;
         }
+        function maxY(vertices){
+            var max = vertices.reduce( function (previous, current) { 
+                return previous.y > current.y ? previous:current;
+            });
+            return max.y
+        }
+        function minY(vertices){
+            var min = vertices.reduce( function (previous, current) { 
+                return previous.y < current.y ? previous:current;
+            });
+            return min.y;
+        }
         function getVerticesInLine(body, lineIndex){
+            if(maxY(body.vertices) <= line(lineIndex).bottom){
+                return;
+            }
             let upward = verticesSlice(body.vertices, line(lineIndex).bottom)[0]
+            if(minY(body.vertices) >= line(lineIndex).top){
+                return;
+            }
             let downward = verticesSlice(upward, line(lineIndex).top)[1]
             return downward
 
@@ -353,13 +371,17 @@ function main(){
                     }
                 }
                 
+
+
+
+                // newArr 작동 수정
                 let newArr = [floor];
 
 
 
                 for(let i = 1; i<2; i++){
                     for(let freeBody of freeBodies.slice(1)){
-                            Composite.remove(world, freeBody);
+
 
                             // let slice = verticesSlice(freeBody.vertices, line(i).bottom)
                             // slice.forEach(vertex=>{
@@ -373,17 +395,21 @@ function main(){
                             //     Composite.add(world, piece);
                             // }
                             let slice = getVerticesInLine(freeBody, 0)
-                            console.log(slice)
-                            let piece = customShape(
-                                {
-                                    vertices : slice,
-                                    color : freeBody.render.fillStyle
-                                }
-                            )
-                            if(piece){
+                            if (slice){
+                                Composite.remove(world, freeBody);
+                                let piece = customShape(
+                                    {
+                                        vertices : slice,
+                                        color : freeBody.render.fillStyle
+                                    }
+                                )
                                 newArr.push(piece)
                                 Composite.add(world, piece);
                             }
+                            else {
+                                newArr.push(freeBody)
+                            }
+
                                 
                     }
                             
@@ -398,7 +424,6 @@ function main(){
                 checkLineFlag = 1;
                 freeBodies.push(currBody)
                 addBodyFlag = 1;
-                checkLineFlag = 1;
             }
 
             
