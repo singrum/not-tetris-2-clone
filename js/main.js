@@ -15,17 +15,6 @@
 
 function main(){
     
-        function percentX(percent) {
-            return Math.round((percent / 100) * window.innerWidth);
-        }
-        function percentY(percent) {
-            return Math.round((percent / 100) * window.innerHeight);
-        }
-        function getRandomInt(min, max) {
-            min = Math.ceil(min);
-            max = Math.floor(max);
-            return Math.floor(Math.random() * (max - min + 1) + min);
-        }
         
         // module aliases
         const Engine = Matter.Engine,
@@ -56,22 +45,46 @@ function main(){
             options: {
             wireframes: false,
             showInternalEdges: false,
-            width: percentX(100),
-            height: percentY(100),
+            width: window.innerWidth,
+            height: window.innerHeight,
             background: "transparent"
             }
         });
         
-        
+        function arrToVertices(arr){
+            let result = ``;
+            for(let i = 0; i < arr.length; i += 2){
+                result = result.concat(`${arr[i]},${arr[i+1]} `);
+            }
+            result = result.substring(0, result.length - 1);
+    
+            result = Vertices.fromPath(result);
+            
+            return result;
+        }
+    
+        function verticesToArr(ver){
+            let result = [];
+            ver.forEach(v=>
+                {
+                    result.push(v.x);
+                    result.push(v.y);
+                })
+            return result;
+        }
+    
+        function verticesSlice(ver, y){
+            return PolyK.Slice(verticesToArr(ver), 0,y, WindowProp.width, y).map(piece=>arrToVertices(piece));
+        }
         
         function customShape(shapeOption, static = false) {
-            let centre = Vertices.mean(shapeOption.vertices);
+            let centre = Vertices.centre(shapeOption.vertices);
             let result;
             if(! shapeOption.pos) {
                 result = Bodies.fromVertices(centre.x, centre.y, shapeOption.vertices, {
                     frictionAir : 0.1,
                     friction : 0.2,
-                    frictionStatic : 0.3,
+                    frictionStatic : 0.5,
                     isStatic: static,
                     render : {fillStyle: shapeOption.color}
                 })
@@ -80,7 +93,7 @@ function main(){
                 result = Bodies.fromVertices(shapeOption.pos.x, shapeOption.pos.y, shapeOption.vertices, {
                     frictionAir : 0.1,
                     friction : 0.2,
-                    frictionStatic : 0.3,
+                    frictionStatic : 0.5,
                     isStatic: static,
                     render : {fillStyle: shapeOption.color}
                 })
@@ -92,101 +105,104 @@ function main(){
             // result.convex_vertices = result.vertices
             return result;
         }
-        function verticesToArr(vertices){
-            let result = [];
-            vertices.forEach(vertex => {
-                result.push(vertex.x);
-                result.push(vertex.y);
-            })
-            return result;
-        }
-
-        function arrToVertices(arr){
-            let shape = ``;
-            for(let i = 0; i<arr.length; i+=2){
-                shape = shape.concat(`${arr[i]},${arr[i + 1]} `)
-            }
-            return Vertices.fromPath(shape)
-
-        }
         
-        function verticesSlice(vertices, lineIndex){
-            let slice = PolyK.Slice(verticesToArr(vertices), 0,line(lineIndex).bottom, window_w, line(lineIndex).bottom);
-            return slice.map(piece=>arrToVertices(piece));
-
-        }
 
         //frame 7 : 3
-        const floor_h = 200;
-        const frameRatio = 3/7;
-        const window_w = window.innerWidth;
-        const window_h = window.innerHeight;
-        const frame_h = window_h - floor_h;
-        const frame_w = frameRatio * frame_h;
-        const frame_offset = {x : (window_w - frame_w)/2, y : floor_h};
-        const unit = frame_h / 21;
-        const unit_h = 21, unit_w = 9;
-        
-        const offset = {x : (window_w - frame_w)/2, y : 100};
-        let ground = Bodies.rectangle(window_w/2, window_h - floor_h/2 , frame_w, floor_h, { isStatic: true, render : {fillStyle: "#000000", lineWidth: 0}});
-        ground.friction = 0.2;
-        ground.frictionStatic = 0.3;
-        let leftWall = Bodies.rectangle((window_w - frame_w)/4, window_h / 2, (window_w - frame_w)/2,window_h, { isStatic: true, render : {fillStyle: "#000000", lineWidth: 0}});
-        leftWall.friction = 0;
-        let rightWall = Bodies.rectangle(window_w - (window_w - frame_w)/4, window_h / 2,(window_w - frame_w)/2,window_h,{ isStatic: true, friction : 0, render : {fillStyle: "#000000", lineWidth: 0}});        leftWall.friction = 0;
-        rightWall.friction = 0;
-        Composite.add(world, ground)
-        Composite.add(world, leftWall)
-        Composite.add(world, rightWall)
-        
+        const WindowProp = {width : window.innerWidth, height : window.innerHeight},
+        Floor = {height : 200},
+        Ceiling = {height : 50},
+        Space = {
+            ratio : 3/7, 
+            height : WindowProp.height - Floor.height - Ceiling.height,
+            y : Ceiling.height,
+            row : 21,
+        },
+        Unit = Space.height / Space.row;
+        Space.width = Space.height * Space.ratio;
+        Space.x = (WindowProp.width - Space.width) / 2;
+        Space.y = Ceiling.height;
+        Space.column = Space.row * Space.ratio;
+
+
+        let floor = Bodies.rectangle(WindowProp.width / 2, WindowProp.height - Floor.height / 2, Space.width, Floor.height, 
+            {
+                isStatic: 1, 
+                friction : 0.2, 
+                frictionStatic : 0.3, 
+                render : {fillStyle: "#000000", lineWidth: 0}
+            }
+        );
+
+        let ceiling = Bodies.rectangle(WindowProp.width / 2, Ceiling.height / 2, Space.width, Ceiling.height, 
+            {
+                isStatic: 1, 
+                friction : 0.2, 
+                frictionStatic : 0.3, 
+                render : {fillStyle: "#000000", lineWidth: 0}
+            }
+        );
+
+        let leftWall = Bodies.rectangle((WindowProp.width - Space.width)/4, WindowProp.height / 2, (WindowProp.width - Space.width)/2,WindowProp.height, 
+            {
+                isStatic: 1, 
+                friction : 0,
+                render : {fillStyle: "#000000", lineWidth: 0}
+            }
+        );
+                
+        let rightWall = Bodies.rectangle(WindowProp.width - (WindowProp.width - Space.width)/4, WindowProp.height / 2,(WindowProp.width - Space.width)/2,WindowProp.height,
+            {
+                isStatic: 1, 
+                friction : 0, 
+                render : {fillStyle: "#000000", lineWidth: 0}
+            }
+        );        
+
+        Composite.add(world, [floor, ceiling, leftWall, rightWall])
+        console.log(world)
         
         
         //object
         Common.setDecomp(decomp)
+        class Tetris{
+            static length = 3;
+            constructor(shape){
+                this.name = shape;
+                switch(shape){
+                    case 0:
+                        this.path = `${Unit},0 0,${Unit * Math.sqrt(3)} ${Unit * 2},${Unit * Math.sqrt(3)}`;
+                        this.color = '#9b5fe0';
+                        break;
+                    case 1:
+                        this.path = `0,0 0,${Unit} ${Unit * 4},${Unit} ${Unit * 4},0`;
+                        this.color = '#16a4d8';
+                        break;
+                    case 2:
+                        this.path = `0,0 0,${Unit * 2} ${Unit * 2},${Unit * 2} ${Unit * 2},0`;
+                        this.color = '#60dbe8'
+                        break;
+                    case 3:
+                    case 4:
 
-        let tetris = {
-            I : {
-                vertices : Vertices.fromPath(`0,0 0,${unit} ${unit * 4},${unit} ${unit * 4},0`),
-                color : '#9b5fe0',
-                pos : {x : offset.x + unit*4, y : offset.y}
-            },
-            O : {
-                vertices : Vertices.fromPath(`0,0 0,${unit * 2} ${unit * 2},${unit * 2} ${unit * 2},0`),
-                color : '#16a4d8',
-                pos : {x : offset.x + unit * 4, y : offset.y}
-            },
-            T : {
-                vertices : Vertices.fromPath(`0,0 0,${unit} ${unit},${unit} ${unit},${unit * 2} ${unit * 2},${unit * 2} ${unit * 2},${unit} ${unit * 3},${unit} ${unit * 3},0`),
-                color : '#60dbe8',
-                pos : {x : offset.x + unit * 7/2, y : offset.y}
-            },
-            J : {
-                vertices : Vertices.fromPath(`${unit},0 ${unit},${unit*2} 0,${unit*2} 0,${unit*3} ${unit*2},${unit*3} ${unit*2},0`),
-                color : '#8bd346',
-                pos : {x : window_w/2, y : offset.y}
-            },
-            L : {
-                vertices : Vertices.fromPath(`0,0 0,${unit*3} ${unit*2},${unit*3} ${unit*2},${unit*2} ${unit},${unit*2} ${unit},0`),
-                color : '#efdf48',
-                pos : {x : window_w/2, y : offset.y}
-            },
-            S : {
-                vertices : Vertices.fromPath(`${unit},0 ${unit},${unit} 0,${unit} 0,${unit*2} ${unit*2},${unit*2} ${unit*2},${unit} ${unit*3},${unit} ${unit*3},0`),
-                color : '#f9a52c',
-                pos : {x : window_w/2, y : offset.y}
-            },
-            Z : {
-                vertices : Vertices.fromPath(`0,0 0,${unit} ${unit},${unit} ${unit},${unit*2} ${unit*3},${unit*2} ${unit*3},${unit} ${unit*2},${unit} ${unit*2},0`),
-                color : '#d64e12',
-                pos : {x : window_w/2, y : offset.y}
+                }
+
+                switch(shape){
+                    case 0:
+                    case 1:
+                    case 2:
+                    case 3:
+                        this.body = Bodies.fromVertices(Space.x + Space.width / 2 , Space.y + Unit ,Vertices.fromPath(this.path),
+                        {   frictionAir : 0.1,
+                            friction : 0.2,
+                            frictionStatic : 0.5,
+                            isStatic: 0,
+                            render: {fillStyle: this.color}
+                        });
+                        break;
+                }
             }
-        };
+        }
 
-
-
-        // let s = customShape(tetris.L, true)
-        // Composite.add(world, s)
-        // console.log(s)
 
 
 
@@ -266,13 +282,13 @@ function main(){
         
         function line(index){
             return {
-                bottom : unit * (21 - index),
-                top : unit * (20 - index)
+                bottom : Ceiling.height + Unit * (21 - index),
+                top : Ceiling.height + Unit * (20 - index)
             }
         }
 
 
-        let freeBodies = [ground];
+        let freeBodies = [floor];
         let currBody
         let checkLineFlag = 0;
         let addBodyFlag = 1;
@@ -286,26 +302,6 @@ function main(){
 
         }
 
-        function bodyToArr(body){
-            let result = [];
-            body.vertices.forEach(vertex => {
-                result.push(vertex.x);
-                result.push(vertex.y);
-            })
-            return result;
-        }
-
-        function arrToBody(arr){
-            let shape1 = ``;
-            for(let i = 0; i<arr.length; i+=2){
-                shape1 = shape1.concat(`${arr[i]},${arr[i + 1]} `)
-            }
-            return customShape({
-                shape : shape1,
-                color : '#8bd346'
-            });
-
-        }
 
         function point(x, y){
             let rect = Bodies.rectangle(x,y, 5,5, {isStatic: true, render : {fillStyle : "#ff0000", strokeStyle: 0}});
@@ -316,7 +312,7 @@ function main(){
 
             if (addBodyFlag){
                 addBodyFlag = 0
-                currBody = customShape(Object.values(tetris)[Math.floor(Math.random() * Object.keys(tetris).length)]);
+                currBody = new Tetris(Math.floor(Math.random() * Tetris.length)).body;
                 
                 // currBody.vertices.forEach(v=>{point(v.x, v.y)})
                 Body.setVelocity(currBody, {x : 0, y : 5});
@@ -338,61 +334,48 @@ function main(){
 
             if(rotateDirection === CL){
                 Body.applyForce(currBody, currBody.position, {x : currBody.mass * 0.002, y : 0});
-                Body.applyForce(currBody, {x : currBody.position.x, y : currBody.position.y + unit}, {x : -currBody.mass * 0.002, y : 0});
+                Body.applyForce(currBody, {x : currBody.position.x, y : currBody.position.y + Unit}, {x : -currBody.mass * 0.002, y : 0});
             }
             else if(rotateDirection === CCL){
                 Body.applyForce(currBody, currBody.position, {x : -currBody.mass * 0.002, y : 0});
-                Body.applyForce(currBody, {x : currBody.position.x, y : currBody.position.y + unit}, {x : currBody.mass * 0.002, y : 0});
+                Body.applyForce(currBody, {x : currBody.position.x, y : currBody.position.y + Unit}, {x : currBody.mass * 0.002, y : 0});
             }
 
             if(checkLineFlag){
                 checkLineFlag = 0;
-                let newArr = [ground];
                 for(let i = 1; i<2; i++){
-                    freeBodies.forEach((freeBody) =>{
-                        if(freeBody !== ground){
-                            Composite.remove(world, freeBody);
-
-                            console.log(Vertices.centre(freeBody.raw_vertices));
-                            Vertices.rotate(freeBody.raw_vertices, freeBody.angle, Vertices.mean(freeBody.raw_vertices));
-                            
-                            Vertices.translate(freeBody.raw_vertices, {x : freeBody.position.x - Vertices.mean(freeBody.raw_vertices).x, y : freeBody.position.y - Vertices.mean(freeBody.raw_vertices).y});
-                            
-
-                            //debug
-                            
-                            // let clone = customShape(
-                            //     {
-                            //         vertices : freeBody.raw_vertices,
-                            //         color : "#ff0000"
-                            //     },true
-                            // )
-                            // Composite.add(world, customShape(
-                            //     {
-                            //         vertices : freeBody.raw_vertices,
-                            //         color : "#ff0000"
-                            //     },true
-                            // )
-                            // )
-                            // newArr.push(clone)
+                    for(let i = 1; i < freeBodies.length; i++){
+                        freeBodies[i].vertices
+                    }
+                }
+                
+                let newArr = [floor];
 
 
-                            let slice = verticesSlice(freeBody.raw_vertices, i)
+
+                for(let i = 1; i<2; i++){
+                    for(let j = 1; j < freeBodies.length; j++){
+                        if(freeBodies[j] !== floor){
+                            Composite.remove(world, freeBodies[j]);
+
+                            let slice = verticesSlice(freeBodies[j].vertices, line(i).bottom)
                             slice.forEach(vertex=>{
                                 let piece = customShape(
                                     {
                                         vertices : vertex,
-                                        color : freeBody.render.fillStyle
+                                        color : freeBodies[j].render.fillStyle
                                     }
                                 )
                                 newArr.push(piece)
                                 Composite.add(world, piece);
-                            })
-                            // point(frame_offset.x, line(i).bottom);
+                            }
+                        )
+                                
+                    }
                             
                             
                         }
-                    })
+                    
                 }
                 freeBodies = newArr;
 

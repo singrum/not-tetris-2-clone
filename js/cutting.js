@@ -265,7 +265,7 @@ function main(){
     // console.log(getConcaveVertices(concave))
     Body.setAngle(concave, 1)
     let s = verticesSlice(getConcaveVertices(concave), 280)
-    
+    console.log(s)
     // pointVertices(concave.vertices)
     s.forEach(a=>{
         let centre =Vertices.centre(a)
@@ -276,25 +276,9 @@ function main(){
         Composite.add(world, b)
 
     })
+    console.log(world)
     
     
-    // verticesSlice(concave.vertices, 300).forEach(x=>
-    //     {
-    //         Composite.add(world, Bodies.fromVertices(Vertices.mean(x),Vertices.mean(x),x, 
-    //             {
-    //                 isStatic: 0,
-    //                 render: {fillStyle: "#000000"}
-    //             })
-    //             )
-    //     }
-    // )
-    
-    // console.log(world)
-    
-    
-
-
-    // console.log(concave)
 
 
 
