@@ -76,10 +76,6 @@ function main(){
             var max = vertices.reduce( function (previous, current) { 
                 return previous.y > current.y ? previous:current;
             });
-            vertices.forEach((v)=>{
-                console.log(v.y)
-            })
-            console.log(max.y)
             return max.y
         }
         function minY(vertices){
@@ -94,26 +90,22 @@ function main(){
             let max = maxY(body.vertices);
 
             if(max <= top || min >= bottom){
-                console.log(body, 0)
                 return [body.vertices];
                 
             }
 
             //bottom, top 사이에 들어가 있는 경우
             if(max <= bottom && min >= top){
-                console.log(body, 1)
                 return [];
             }
 
             //top에 걸쳐있는 경우
             if(max > top && min < top){
-                console.log(body, 2)
                 return [verticesSlice(body.vertices, top)[0]];
             }
 
             //bottom에 걸쳐있는 경우
             if(min < bottom && max > bottom){
-                console.log(body, 3)
                 return [verticesSlice(body.vertices, bottom)[1]]
             }
 
@@ -124,8 +116,51 @@ function main(){
             return [upwardPart,downwardPart]
 
         }
+
+        function getAreaInRange(body, bottom, top){
+            let min = minY(body.vertices);
+            let max = maxY(body.vertices);
+
+            if(max <= top || min >= bottom){
+                return 0;
+                
+            }
+
+            //bottom, top 사이에 들어가 있는 경우
+            if(max <= bottom && min >= top){
+                return Vertices.area(body.vertices);
+            }
+
+            //top에 걸쳐있는 경우
+            if(max > top && min < top){
+                return Vertices.area(verticesSlice(body.vertices, top)[1]);
+            }
+
+            //bottom에 걸쳐있는 경우
+            if(min < bottom && max > bottom){
+                return Vertices.area(verticesSlice(body.vertices, bottom)[0]);
+            }
+
+            //둘다 걸쳐있는 경우
+            let s = verticesSlice(body.vertices, bottom);
+            return Vertices.area(verticesSlice(s[0], top)[1]);
+
+
+        }
+
         function getVerticesOutLine(body, lineIndex){
-            return getVerticesOutRange(body, line(lineIndex).bottom, line(lineIndex).top)
+            return getVerticesOutRange(body, line(lineIndex).bottom, line(lineIndex).top);
+        }
+        function getAreaInLine(body, lineIndex){
+            return getAreaInRange(body, line(lineIndex).bottom, line(lineIndex).top);
+        }
+
+        function getTotalAreaInLine(bodies, lineIndex){
+            let result = 0;
+            for(let body of bodies){
+                result += getAreaInLine(body, lineIndex);
+            }
+            return result
         }
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -345,6 +380,10 @@ function main(){
         let currBody
         let checkLineFlag = 0;
         let addBodyFlag = 1;
+        let areaArray = [];
+        let newArr;
+        let threshold = Unit * Unit * 3;
+        let fullLines = [];
         let tick =0;
         
 
@@ -396,21 +435,25 @@ function main(){
 
             if(checkLineFlag){
                 checkLineFlag = 0;
-                for(let i = 1; i<2; i++){
-                    for(let i = 1; i < freeBodies.length; i++){
-                        freeBodies[i].vertices
+                
+                // lineIndex = 0,1,2,3,4,...,19,20
+                for(let i = 0; i<20; i++){
+                    areaArray[i] = getTotalAreaInLine(freeBodies.slice(1), i);
+                    console.log(i, "번째 줄 : ", areaArray[i])
+                    if(areaArray[i] >= threshold){
+                        fullLines.push(i)
                     }
                 }
+                
                 
 
 
 
-                // newArr 작동 수정
-                let newArr = [floor];
-                for(let i = 1; i<2; i++){
+                newArr = [floor];
+                for(let fullLine of fullLines){
                     for(let freeBody of freeBodies.slice(1)){
 
-                        let slices = getVerticesOutLine(freeBody, 0)
+                        let slices = getVerticesOutLine(freeBody, fullLine)
                         
 
                         if (slices[0] === freeBody.vertices){
@@ -433,12 +476,12 @@ function main(){
 
                                 
                     }
-
+                    freeBodies = newArr.slice(0);
+                    newArr = [];
                             
                 }
-                freeBodies = newArr;
-                
-                console.log(freeBodies)
+
+                fullLines = [];
 
             }
             if(isValidCollide(currBody)){
