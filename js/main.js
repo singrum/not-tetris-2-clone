@@ -84,17 +84,39 @@ function main(){
             });
             return min.y;
         }
-        function getVerticesInLine(body, lineIndex){
-            if(maxY(body.vertices) <= line(lineIndex).bottom){
-                return;
-            }
-            let upward = verticesSlice(body.vertices, line(lineIndex).bottom)[0]
-            if(minY(body.vertices) >= line(lineIndex).top){
-                return;
-            }
-            let downward = verticesSlice(upward, line(lineIndex).top)[1]
-            return downward
+        
+        function getVerticesOutRange(body, bottom, top){
+            let min = minY(body.vertices);
+            let max = maxY(body.vertices);
 
+            if(max <= bottom || min >= top){
+                return [body.vertices];
+            }
+
+            //bottom, top 사이에 들어가 있는 경우
+            if(min >= bottom && max <= top){
+                return [];
+            }
+
+            //top에 걸쳐있는 경우
+            if(min > bottom){
+                return [verticesSlice(body.vertices, bottom)[0]];
+            }
+
+            //bottom에 걸쳐있는 경우
+            if(max < top){
+                return [verticesSlice(body.vertices, bottom)[1]]
+            }
+
+            //둘다 걸쳐있는 경우
+            let s = verticesSlice(body.vertices, bottom)
+            let downwardPart = s[1]
+            let upwardPart = verticesSlice(s[0], top)[0]
+            return [upwardPart,downwardPart]
+
+        }
+        function getVerticesOutLine(body, lineIndex){
+            return getVerticesOutRange(body, line(lineIndex).bottom, line(lineIndex).top)
         }
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -382,21 +404,15 @@ function main(){
                 for(let i = 1; i<2; i++){
                     for(let freeBody of freeBodies.slice(1)){
 
+                        let slices = getVerticesOutLine(freeBody, 0)
+                        
 
-                            // let slice = verticesSlice(freeBody.vertices, line(i).bottom)
-                            // slice.forEach(vertex=>{
-                            //     let piece = customShape(
-                            //         {
-                            //             vertices : vertex,
-                            //             color : freeBody.render.fillStyle
-                            //         }
-                            //     )
-                            //     newArr.push(piece)
-                            //     Composite.add(world, piece);
-                            // }
-                            let slice = getVerticesInLine(freeBody, 0)
-                            if (slice){
-                                Composite.remove(world, freeBody);
+                        if (slices[0] === freeBody.vertices){
+                            newArr.push(freeBody);
+                        }
+                        else{
+                            Composite.remove(world, freeBody);
+                            for(let slice of slices){
                                 let piece = customShape(
                                     {
                                         vertices : slice,
@@ -404,20 +420,18 @@ function main(){
                                     }
                                 )
                                 newArr.push(piece)
-                                Composite.add(world, piece);
+                                Composite.add(world, piece);    
                             }
-                            else {
-                                newArr.push(freeBody)
-                            }
+
+                        }
 
                                 
                     }
-                            
+                    freeBodies = newArr;
                             
                 }
-                    
                 
-                freeBodies = newArr;
+                console.log(freeBodies)
 
             }
             if(isValidCollide(currBody)){
