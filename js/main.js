@@ -76,6 +76,10 @@ function main(){
             var max = vertices.reduce( function (previous, current) { 
                 return previous.y > current.y ? previous:current;
             });
+            vertices.forEach((v)=>{
+                console.log(v.y)
+            })
+            console.log(max.y)
             return max.y
         }
         function minY(vertices){
@@ -89,22 +93,27 @@ function main(){
             let min = minY(body.vertices);
             let max = maxY(body.vertices);
 
-            if(max <= bottom || min >= top){
+            if(max <= top || min >= bottom){
+                console.log(body, 0)
                 return [body.vertices];
+                
             }
 
             //bottom, top 사이에 들어가 있는 경우
-            if(min >= bottom && max <= top){
+            if(max <= bottom && min >= top){
+                console.log(body, 1)
                 return [];
             }
 
             //top에 걸쳐있는 경우
-            if(min > bottom){
-                return [verticesSlice(body.vertices, bottom)[0]];
+            if(max > top && min < top){
+                console.log(body, 2)
+                return [verticesSlice(body.vertices, top)[0]];
             }
 
             //bottom에 걸쳐있는 경우
-            if(max < top){
+            if(min < bottom && max > bottom){
+                console.log(body, 3)
                 return [verticesSlice(body.vertices, bottom)[1]]
             }
 
@@ -398,9 +407,6 @@ function main(){
 
                 // newArr 작동 수정
                 let newArr = [floor];
-
-
-
                 for(let i = 1; i<2; i++){
                     for(let freeBody of freeBodies.slice(1)){
 
@@ -427,9 +433,10 @@ function main(){
 
                                 
                     }
-                    freeBodies = newArr;
+
                             
                 }
+                freeBodies = newArr;
                 
                 console.log(freeBodies)
 
