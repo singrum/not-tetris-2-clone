@@ -132,12 +132,12 @@ function main(){
             }
 
             //top에 걸쳐있는 경우
-            if(max > top && min < top){
+            if(max > top && max < bottom){
                 return Vertices.area(verticesSlice(body.vertices, top)[1]);
             }
 
             //bottom에 걸쳐있는 경우
-            if(min < bottom && max > bottom){
+            if(min > top && min < bottom){
                 return Vertices.area(verticesSlice(body.vertices, bottom)[0]);
             }
 
@@ -444,6 +444,7 @@ function main(){
                         fullLines.push(i)
                     }
                 }
+                console.log(threshold)
                 
                 
 
@@ -462,6 +463,9 @@ function main(){
                         else{
                             Composite.remove(world, freeBody);
                             for(let slice of slices){
+                                if (slice === undefined){
+                                    break;
+                                }
                                 let piece = customShape(
                                     {
                                         vertices : slice,
