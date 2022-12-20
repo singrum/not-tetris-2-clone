@@ -156,7 +156,8 @@ function main(){
             render : {fillStyle: "#000000", lineWidth: 0}
         }
     );        
-    // Composite.add(world, [floor, ceiling, leftWall, rightWall]);
+    Composite.add(world, [floor, ceiling, leftWall, rightWall]);
+    console.log(rightWall)
 
     class Tetris{
         constructor(shape){
