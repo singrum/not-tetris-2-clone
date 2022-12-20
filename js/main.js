@@ -72,6 +72,12 @@ function main(){
             body.friction = f;
             body.frictionStatic = fs;
         }
+        function getVerticesInLine(body, lineIndex){
+            let upward = verticesSlice(body.vertices, line(lineIndex).bottom)[0]
+            let downward = verticesSlice(upward, line(lineIndex).top)[1]
+            return downward
+
+        }
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -171,12 +177,7 @@ function main(){
             }
         );        
         setFriction(rightWall, 0, 0);
-        Composite.add(world, floor);
-        Composite.add(world, ceiling);
-        Composite.add(world, leftWall);
-        Composite.add(world, rightWall);
-        // Composite.add(world, [floor, ceiling, leftWall, rightWall])
-        console.log(world)
+        Composite.add(world, [floor, ceiling, leftWall, rightWall])
         
         
         //object
@@ -357,29 +358,39 @@ function main(){
 
 
                 for(let i = 1; i<2; i++){
-                    for(let j = 1; j < freeBodies.length; j++){
-                        if(freeBodies[j] !== floor){
-                            Composite.remove(world, freeBodies[j]);
+                    for(let freeBody of freeBodies.slice(1)){
+                            Composite.remove(world, freeBody);
 
-                            let slice = verticesSlice(freeBodies[j].vertices, line(i).bottom)
-                            slice.forEach(vertex=>{
-                                let piece = customShape(
-                                    {
-                                        vertices : vertex,
-                                        color : freeBodies[j].render.fillStyle
-                                    }
-                                )
+                            // let slice = verticesSlice(freeBody.vertices, line(i).bottom)
+                            // slice.forEach(vertex=>{
+                            //     let piece = customShape(
+                            //         {
+                            //             vertices : vertex,
+                            //             color : freeBody.render.fillStyle
+                            //         }
+                            //     )
+                            //     newArr.push(piece)
+                            //     Composite.add(world, piece);
+                            // }
+                            let slice = getVerticesInLine(freeBody, 0)
+                            console.log(slice)
+                            let piece = customShape(
+                                {
+                                    vertices : slice,
+                                    color : freeBody.render.fillStyle
+                                }
+                            )
+                            if(piece){
                                 newArr.push(piece)
                                 Composite.add(world, piece);
                             }
-                        )
                                 
                     }
                             
                             
-                        }
-                    
                 }
+                    
+                
                 freeBodies = newArr;
 
             }
