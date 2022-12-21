@@ -268,7 +268,6 @@ function main(){
         
         
         //object
-        Common.setDecomp(decomp)
         class Tetris{
             static length = 3;
             constructor(shape){
@@ -307,6 +306,36 @@ function main(){
                 }
             }
         }
+
+        const upButton = document.querySelector("#up-button");
+        const downButton = document.querySelector("#down-button");
+        const leftButton = document.querySelector("#left-button");
+        const rightButton = document.querySelector("#right-button");
+        const zButton = document.querySelector("#z-button");
+        const xButton = document.querySelector("#x-button");
+
+        const controllerCenter = {x : WindowProp.width / 2 + Space.width / 4 - 20, y : Space.y + Space.height + Floor.height / 2 - 20 }
+        const zxCenter = {x : WindowProp.width / 2 - Space.width / 4 - 20, y : Space.y + Space.height + Floor.height / 2 - 20}
+
+        upButton.style.left = `${controllerCenter.x}px`;
+        upButton.style.top = `${controllerCenter.y - 30}px`;
+
+        downButton.style.left = `${controllerCenter.x}px`
+        downButton.style.top = `${controllerCenter.y + 30}px`
+
+        leftButton.style.left = `${controllerCenter.x - 30}px`;
+        leftButton.style.top = `${controllerCenter.y}px`;
+
+        rightButton.style.left = `${controllerCenter.x + 30}px`;
+        rightButton.style.top = `${controllerCenter.y}px`;
+
+        zButton.style.left = `${zxCenter.x - 25}px`
+        zButton.style.top = `${zxCenter.y}px`
+
+        xButton.style.left = `${zxCenter.x + 25}px`
+        xButton.style.top = `${zxCenter.y}px`
+
+        
 
 
 
@@ -443,12 +472,12 @@ function main(){
                 // lineIndex = 0,1,2,3,4,...,19,20
                 for(let i = 0; i<20; i++){
                     areaArray[i] = getTotalAreaInLine(freeBodies.slice(1), i);
-                    console.log(i, "번째 줄 : ", areaArray[i])
+                    
                     if(areaArray[i] >= threshold){
                         fullLines.push(i)
                     }
                 }
-                console.log(threshold)
+                
                 
 
 
