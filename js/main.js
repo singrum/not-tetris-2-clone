@@ -382,7 +382,7 @@ function main(){
         let addBodyFlag = 1;
         let areaArray = [];
         let newArr;
-        let threshold = Unit * Unit * 3;
+        let threshold = Unit * Unit * 8;
         let fullLines = [];
         let tick =0;
         
