@@ -149,7 +149,7 @@ function main(){
         }
 
         function getVerticesOutLine(body, lineIndex){
-            return getVerticesOutRange(body, line(lineIndex).bottom, line(lineIndex).top);
+            return getVerticesOutRange(body, line(lineIndex).bottom + 0.1, line(lineIndex).top - 0.1);
         }
         function getAreaInLine(body, lineIndex){
             return getAreaInRange(body, line(lineIndex).bottom, line(lineIndex).top);
@@ -165,7 +165,7 @@ function main(){
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-
+        
         // module aliases
         const Engine = Matter.Engine,
                 Bodies = Matter.Bodies,
@@ -228,7 +228,7 @@ function main(){
         Space.x = (WindowProp.width - Space.width) / 2;
         Space.y = Ceiling.height;
         Space.column = Space.row * Space.ratio;
-
+        
 
         let floor = Bodies.rectangle(WindowProp.width / 2, WindowProp.height - Floor.height / 2, Space.width, Floor.height, 
             {
@@ -237,7 +237,6 @@ function main(){
             }
         );
         setFriction(floor, 0.2, 0.5);
-        console.log(floor)
 
         let ceiling = Bodies.rectangle(WindowProp.width / 2, Ceiling.height / 2, Space.width, Ceiling.height, 
             {
@@ -382,10 +381,11 @@ function main(){
         let addBodyFlag = 1;
         let areaArray = [];
         let newArr;
-        let threshold = Unit * Unit * 8;
+        let threshold = Unit * Unit * 7;
         let fullLines = [];
         let tick =0;
-        
+        let score = 0;
+        const scoreBoard = document.querySelector("#score-board");
 
 
         function isValidCollide(body){
@@ -446,7 +446,9 @@ function main(){
                 }
                 console.log(threshold)
                 
-                
+                // if(freeBodies.some((body) => minY(body) < Space.y + Unit * 2)){
+                //     gameOver();
+                // }
 
 
 
@@ -482,6 +484,8 @@ function main(){
                     }
                     freeBodies = newArr.slice(0);
                     newArr = [];
+                    score += fullLines.length;
+                    scoreBoard.innerHTML = `score : ${score}`
                             
                 }
 
