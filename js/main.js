@@ -238,12 +238,16 @@ function main(){
         );
         setFriction(floor, 0.2, 0.5);
 
-        let ceiling = Bodies.rectangle(WindowProp.width / 2, Ceiling.height / 2, Space.width, Ceiling.height, 
-            {
-                isStatic: 1, 
-                render : {fillStyle: "#000000", lineWidth: 0}
-            }
-        );
+//        let ceiling = Bodies.rectangle(WindowProp.width / 2, Ceiling.height / 2, Space.width, Ceiling.height, 
+//            {
+//                isStatic: 1, 
+//                render : {fillStyle: "#000000", lineWidth: 0}
+//            }
+//        );
+        const ceiling = document.querySelector("#ceiling");
+        ceiling.style.width = "100%";
+        ceiling.style.height = `${Ceiling.height}px`;
+        console.log(ceiling)
 
         let leftWall = Bodies.rectangle((WindowProp.width - Space.width)/4, WindowProp.height / 2, (WindowProp.width - Space.width)/2,WindowProp.height, 
             {                
@@ -260,7 +264,7 @@ function main(){
             }
         );        
         setFriction(rightWall, 0, 0);
-        Composite.add(world, [floor, ceiling, leftWall, rightWall])
+        Composite.add(world, [floor, leftWall, rightWall])
         
         
         //object
@@ -292,7 +296,7 @@ function main(){
                     case 1:
                     case 2:
                     case 3:
-                        this.body = Bodies.fromVertices(Space.x + Space.width / 2 , Space.y + Unit ,Vertices.fromPath(this.path),
+                        this.body = Bodies.fromVertices(Space.x + Space.width / 2 , Space.y - Unit * 2 ,Vertices.fromPath(this.path),
                         {   frictionAir : 0.1,
                             friction : 0.2,
                             frictionStatic : 0.5,
@@ -399,15 +403,15 @@ function main(){
             let rect = Bodies.rectangle(x,y, 5,5, {isStatic: true, render : {fillStyle : "#ff0000", strokeStyle: 0}});
             Composite.add(world, rect);
         }
+        function gameOver(){
 
+        }
         Events.on(runner, 'afterTick', function(){
-
+            
             if (addBodyFlag){
                 addBodyFlag = 0
                 currBody = new Tetris(Math.floor(Math.random() * Tetris.length)).body;
                 
-                // currBody.vertices.forEach(v=>{point(v.x, v.y)})
-                Body.setVelocity(currBody, {x : 0, y : 5});
                 Composite.add(world, currBody);     
             }
             
@@ -446,9 +450,6 @@ function main(){
                 }
                 console.log(threshold)
                 
-                // if(freeBodies.some((body) => minY(body) < Space.y + Unit * 2)){
-                //     gameOver();
-                // }
 
 
 
@@ -493,9 +494,15 @@ function main(){
 
             }
             if(isValidCollide(currBody)){
-                checkLineFlag = 1;
                 freeBodies.push(currBody)
-                addBodyFlag = 1;
+                if(maxY(currBody.vertices) < Ceiling.height){
+
+                    gameOver();
+                }
+                else{
+                    checkLineFlag = 1;
+                    addBodyFlag = 1;
+                }
             }
 
             

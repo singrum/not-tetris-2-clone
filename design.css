@@ -4,3 +4,8 @@
   top : 10px;
   color : #ffffff
 }
+
+#ceiling{
+  position : absolute;
+  background-color: black;
+}
