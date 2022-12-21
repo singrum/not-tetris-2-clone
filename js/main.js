@@ -199,7 +199,7 @@ function main(){
         Render.run(render);
         let runner = Runner.create();
         Runner.run(runner, engine);
-        let mouse = Mouse.create(render.canvas),
+/*        let mouse = Mouse.create(render.canvas),
             mouseConstraint = MouseConstraint.create(engine, {
             mouse: mouse,
             constraint: {
@@ -211,6 +211,7 @@ function main(){
         });
         Composite.add(world, mouseConstraint);
         render.mouse = mouse;
+*/
 
         
 
@@ -313,26 +314,29 @@ function main(){
         const rightButton = document.querySelector("#right-button");
         const zButton = document.querySelector("#z-button");
         const xButton = document.querySelector("#x-button");
+        const buttonRadius = 20;
+        const buttonDistance = 10;
+        const buttonDistance2 = (2 * buttonRadius + buttonDistance) / Math.SQRT2
 
-        const controllerCenter = {x : WindowProp.width / 2 + Space.width / 4 - 20, y : Space.y + Space.height + Floor.height / 2 - 20 }
-        const zxCenter = {x : WindowProp.width / 2 - Space.width / 4 - 20, y : Space.y + Space.height + Floor.height / 2 - 20}
+        const controllerCenter = {x : WindowProp.width / 2 + Space.width / 4 - buttonRadius, y : Space.y + Space.height + Floor.height / 2 - buttonRadius }
+        const zxCenter = {x : WindowProp.width / 2 - Space.width / 4 - buttonRadius, y : Space.y + Space.height + Floor.height / 2 - buttonRadius}
 
         upButton.style.left = `${controllerCenter.x}px`;
-        upButton.style.top = `${controllerCenter.y - 30}px`;
+        upButton.style.top = `${controllerCenter.y - buttonDistance2}px`;
 
         downButton.style.left = `${controllerCenter.x}px`
-        downButton.style.top = `${controllerCenter.y + 30}px`
+        downButton.style.top = `${controllerCenter.y + buttonDistance2}px`
 
-        leftButton.style.left = `${controllerCenter.x - 30}px`;
+        leftButton.style.left = `${controllerCenter.x - buttonDistance2}px`;
         leftButton.style.top = `${controllerCenter.y}px`;
 
-        rightButton.style.left = `${controllerCenter.x + 30}px`;
+        rightButton.style.left = `${controllerCenter.x + buttonDistance2}px`;
         rightButton.style.top = `${controllerCenter.y}px`;
 
-        zButton.style.left = `${zxCenter.x - 25}px`
+        zButton.style.left = `${zxCenter.x - (buttonRadius + buttonDistance / 2)}px`
         zButton.style.top = `${zxCenter.y}px`
 
-        xButton.style.left = `${zxCenter.x + 25}px`
+        xButton.style.left = `${zxCenter.x + (buttonRadius + buttonDistance / 2)}px`
         xButton.style.top = `${zxCenter.y}px`
 
         
@@ -348,8 +352,9 @@ function main(){
 /////////////////////////////////////////////////// events ///////////////////////////////////////////////////
         let forceDirection = -1;
         let forceDown = -1;
+        let forceUp = -1;
         let rotateDirection = -1;
-        const Left = 0, Right = 1, Down = 2, CCL = 3, CL = 4;
+        const Left = 0, Right = 1, Down = 2, Up = 3, CCL = 4, CL = 5;
         document.addEventListener('keydown', keydownEvent, false); 
         document.addEventListener('keyup', keyupEvent, false); 
         function keydownEvent(e){
@@ -361,6 +366,9 @@ function main(){
             }
             if(e.keyCode === 40){
                 forceDown = Down;
+            }
+            if(e.keyCode === 38){
+                forceUp = Up;
             }
 
             if(e.keyCode === 88){
@@ -398,7 +406,45 @@ function main(){
                 }
             }
         }
+        leftButton.addEventListener("touchstart", function(e){
+            forceDirection = Left;
+        })
+        leftButton.addEventListener("touchend", function(e){
+            forceDirection = -1;
+        })
 
+        rightButton.addEventListener("touchstart", function(e){
+            forceDirection = Right;
+        })
+        rightButton.addEventListener("touchend", function(e){
+            forceDirection = -1;
+        })
+        upButton.addEventListener("touchstart", function(e){
+            forceUp = Up;
+        })
+        upButton.addEventListener("touchend", function(e){
+            forceUp = -1;
+        })
+        downButton.addEventListener("touchstart", function(e){
+            forceDown = Down;
+        })
+        downButton.addEventListener("touchend", function(e){
+            forceDown = -1;
+        })
+
+        zButton.addEventListener("touchstart", function(e){
+            rotateDirection = CCL;
+        })
+        zButton.addEventListener("touchend", function(e){
+            rotateDirection = -1;
+        })
+
+        xButton.addEventListener("touchstart", function(e){
+            rotateDirection = CL;
+        })
+        xButton.addEventListener("touchend", function(e){
+            rotateDirection = -1;
+        })
         
         function line(index){
             return {
@@ -435,6 +481,7 @@ function main(){
         function gameOver(){
 
         }
+        
         Events.on(runner, 'afterTick', function(){
             
             if (addBodyFlag){
@@ -456,6 +503,9 @@ function main(){
             if(forceDown === Down){
                 Body.applyForce(currBody, currBody.position, {x : 0, y : currBody.mass * 0.002});
             }
+            else if (forceUp === Up){
+                Body.applyForce(currBody, currBody.position, {x : 0, y : -currBody.mass * 0.0005});
+            }
 
             if(rotateDirection === CL){
                 Body.applyForce(currBody, currBody.position, {x : currBody.mass * 0.002, y : 0});
@@ -467,28 +517,18 @@ function main(){
             }
 
             if(checkLineFlag){
-                checkLineFlag = 0;
-                
+                checkLineFlag = 0;                
                 // lineIndex = 0,1,2,3,4,...,19,20
                 for(let i = 0; i<20; i++){
-                    areaArray[i] = getTotalAreaInLine(freeBodies.slice(1), i);
-                    
+                    areaArray[i] = getTotalAreaInLine(freeBodies.slice(1), i);                   
                     if(areaArray[i] >= threshold){
                         fullLines.push(i)
                     }
                 }
-                
-                
-
-
-
                 newArr = [floor];
                 for(let fullLine of fullLines){
                     for(let freeBody of freeBodies.slice(1)){
-
                         let slices = getVerticesOutLine(freeBody, fullLine)
-                        
-
                         if (slices[0] === freeBody.vertices){
                             newArr.push(freeBody);
                         }
@@ -507,10 +547,7 @@ function main(){
                                 newArr.push(piece)
                                 Composite.add(world, piece);    
                             }
-
                         }
-
-                                
                     }
                     freeBodies = newArr.slice(0);
                     newArr = [];
