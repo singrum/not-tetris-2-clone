@@ -406,31 +406,73 @@ function main(){
                 }
             }
         }
-        leftButton.addEventListener("touchstart", function(e){
-            forceDirection = Left;
-        })
-        leftButton.addEventListener("touchend", function(e){
-            forceDirection = -1;
-        })
+        // leftButton.addEventListener("touchstart", function(e){
+        //     forceDirection = Left;
+        // })
+        // leftButton.addEventListener("touchend", function(e){
+        //     forceDirection = -1;
+        // })
 
-        rightButton.addEventListener("touchstart", function(e){
-            forceDirection = Right;
-        })
-        rightButton.addEventListener("touchend", function(e){
+        // rightButton.addEventListener("touchstart", function(e){
+        //     forceDirection = Right;
+        // })
+        // rightButton.addEventListener("touchend", function(e){
+        //     forceDirection = -1;
+        // })
+        // upButton.addEventListener("touchstart", function(e){
+        //     forceUp = Up;
+        // })
+        // upButton.addEventListener("touchend", function(e){
+        //     forceUp = -1;
+        // })
+        // downButton.addEventListener("touchstart", function(e){
+        //     forceDown = Down;
+        // })
+        // downButton.addEventListener("touchend", function(e){
+        //     forceDown = -1;
+        // })
+
+        let curr_direction = 0
+        document.addEventListener('touchstart', handleTouchStart, false);        
+        document.addEventListener('touchmove', handleTouchMove, false);
+        document.addEventListener('touchend', handleTouchEnd, false); 
+        let xDown = null;                                                        
+        let yDown = null;
+    
+        function getTouches(evt) {
+        return evt.touches ||             
+                evt.originalEvent.touches; 
+        }                                                     
+                                                                                
+        function handleTouchStart(evt) {
+            const firstTouch = getTouches(evt)[0];                                      
+            xDown = firstTouch.clientX;                                      
+            yDown = firstTouch.clientY;                                      
+        };                                                
+                                                                                
+        function handleTouchMove(evt) {
+            if ( ! xDown || ! yDown ) {
+                return;
+            }
+    
+            let xUp = evt.touches[0].clientX;     
+    
+            let xDiff = xDown - xUp;
+
+            if ( xDiff > 0 ) {
+                forceDirection = Left;
+            } else {
+                forceDirection = Right;
+            }           
+            /* reset values */
+            xDown = null;
+            yDown = null;                                             
+        };
+
+        function handleTouchEnd(evt){
             forceDirection = -1;
-        })
-        upButton.addEventListener("touchstart", function(e){
-            forceUp = Up;
-        })
-        upButton.addEventListener("touchend", function(e){
-            forceUp = -1;
-        })
-        downButton.addEventListener("touchstart", function(e){
-            forceDown = Down;
-        })
-        downButton.addEventListener("touchend", function(e){
-            forceDown = -1;
-        })
+            forceDirection = -1
+        }
 
         zButton.addEventListener("touchstart", function(e){
             rotateDirection = CCL;
