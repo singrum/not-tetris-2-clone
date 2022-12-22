@@ -502,7 +502,7 @@ function main(){
         let addBodyFlag = 1;
         let areaArray = [];
         let newArr;
-        let threshold = Unit * Unit * 7;
+        let threshold = Unit * Unit * 7.5;
         let fullLines = [];
         let tick =0;
         let score = 0;
