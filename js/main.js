@@ -406,31 +406,31 @@ function main(){
                 }
             }
         }
-        // leftButton.addEventListener("touchstart", function(e){
-        //     forceDirection = Left;
-        // })
-        // leftButton.addEventListener("touchend", function(e){
-        //     forceDirection = -1;
-        // })
+        leftButton.addEventListener("touchstart", function(e){
+            forceDirection = Left;
+        })
+        leftButton.addEventListener("touchend", function(e){
+            forceDirection = -1;
+        })
 
-        // rightButton.addEventListener("touchstart", function(e){
-        //     forceDirection = Right;
-        // })
-        // rightButton.addEventListener("touchend", function(e){
-        //     forceDirection = -1;
-        // })
-        // upButton.addEventListener("touchstart", function(e){
-        //     forceUp = Up;
-        // })
-        // upButton.addEventListener("touchend", function(e){
-        //     forceUp = -1;
-        // })
-        // downButton.addEventListener("touchstart", function(e){
-        //     forceDown = Down;
-        // })
-        // downButton.addEventListener("touchend", function(e){
-        //     forceDown = -1;
-        // })
+        rightButton.addEventListener("touchstart", function(e){
+            forceDirection = Right;
+        })
+        rightButton.addEventListener("touchend", function(e){
+            forceDirection = -1;
+        })
+        upButton.addEventListener("touchstart", function(e){
+            forceUp = Up;
+        })
+        upButton.addEventListener("touchend", function(e){
+            forceUp = -1;
+        })
+        downButton.addEventListener("touchstart", function(e){
+            forceDown = Down;
+        })
+        downButton.addEventListener("touchend", function(e){
+            forceDown = -1;
+        })
 
         let curr_direction = 0
         document.addEventListener('touchstart', handleTouchStart, false);        
