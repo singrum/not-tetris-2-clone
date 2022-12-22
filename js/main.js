@@ -432,47 +432,46 @@ function main(){
             forceDown = -1;
         })
 
-        let curr_direction = 0
-        document.addEventListener('touchstart', handleTouchStart, false);        
-        document.addEventListener('touchmove', handleTouchMove, false);
-        document.addEventListener('touchend', handleTouchEnd, false); 
-        let xDown = null;                                                        
-        let yDown = null;
+        // document.addEventListener('touchstart', handleTouchStart, false);        
+        // document.addEventListener('touchmove', handleTouchMove, false);
+        // document.addEventListener('touchend', handleTouchEnd, false); 
+        // let xDown = null;                                                        
+        // let yDown = null;
     
-        function getTouches(evt) {
-        return evt.touches ||             
-                evt.originalEvent.touches; 
-        }                                                     
+        // function getTouches(evt) {
+        // return evt.touches ||             
+        //         evt.originalEvent.touches; 
+        // }                                                     
                                                                                 
-        function handleTouchStart(evt) {
-            const firstTouch = getTouches(evt)[0];                                      
-            xDown = firstTouch.clientX;                                      
-            yDown = firstTouch.clientY;                                      
-        };                                                
+        // function handleTouchStart(evt) {
+        //     const firstTouch = getTouches(evt)[0];                                      
+        //     xDown = firstTouch.clientX;                                      
+        //     yDown = firstTouch.clientY;                                      
+        // };                                                
                                                                                 
-        function handleTouchMove(evt) {
-            if ( ! xDown || ! yDown ) {
-                return;
-            }
+        // function handleTouchMove(evt) {
+        //     if ( ! xDown || ! yDown ) {
+        //         return;
+        //     }
     
-            let xUp = evt.touches[0].clientX;     
+        //     let xUp = evt.touches[0].clientX;     
     
-            let xDiff = xDown - xUp;
+        //     let xDiff = xDown - xUp;
 
-            if ( xDiff > 0 ) {
-                forceDirection = Left;
-            } else {
-                forceDirection = Right;
-            }           
-            /* reset values */
-            xDown = null;
-            yDown = null;                                             
-        };
+        //     if ( xDiff > 0 ) {
+        //         forceDirection = Left;
+        //     } else {
+        //         forceDirection = Right;
+        //     }           
+        //     /* reset values */
+        //     xDown = null;
+        //     yDown = null;                                             
+        // };
 
-        function handleTouchEnd(evt){
-            forceDirection = -1;
-            forceDirection = -1
-        }
+        // function handleTouchEnd(evt){
+        //     forceDirection = -1;
+        //     forceDirection = -1
+        // }
 
         zButton.addEventListener("touchstart", function(e){
             rotateDirection = CCL;
