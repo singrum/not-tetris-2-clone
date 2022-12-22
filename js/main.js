@@ -314,12 +314,12 @@ function main(){
         const rightButton = document.querySelector("#right-button");
         const zButton = document.querySelector("#z-button");
         const xButton = document.querySelector("#x-button");
-        const buttonRadius = 20;
+        const buttonRadius = 30;
         const buttonDistance = 10;
         const buttonDistance2 = (2 * buttonRadius + buttonDistance) / Math.SQRT2
 
-        const controllerCenter = {x : WindowProp.width / 2 + Space.width / 4 - buttonRadius, y : Space.y + Space.height + Floor.height / 2 - buttonRadius }
-        const zxCenter = {x : WindowProp.width / 2 - Space.width / 4 - buttonRadius, y : Space.y + Space.height + Floor.height / 2 - buttonRadius}
+        const controllerCenter = {x : WindowProp.width / 2 + WindowProp.width / 4 - buttonRadius, y : Space.y + Space.height + Floor.height / 2 - buttonRadius }
+        const zxCenter = {x : WindowProp.width / 2 - WindowProp.width / 4 - buttonRadius, y : Space.y + Space.height + Floor.height / 2 - buttonRadius}
 
         upButton.style.left = `${controllerCenter.x}px`;
         upButton.style.top = `${controllerCenter.y - buttonDistance2}px`;
