@@ -99,6 +99,14 @@ function main(){
                 return [];
             }
 
+            //둘다 걸쳐있음
+            if(max > bottom && min < top){
+                let s = verticesSlice(body.vertices, bottom)
+                let downwardPart = s[1]
+                let upwardPart = verticesSlice(s[0], top)[0]
+                return [upwardPart,downwardPart]
+            }
+
             //top에 걸쳐있는 경우
             if(max > top && min < top){
                 return [verticesSlice(body.vertices, top)[0]];
@@ -109,11 +117,6 @@ function main(){
                 return [verticesSlice(body.vertices, bottom)[1]]
             }
 
-            //둘다 걸쳐있는 경우
-            let s = verticesSlice(body.vertices, bottom)
-            let downwardPart = s[1]
-            let upwardPart = verticesSlice(s[0], top)[0]
-            return [upwardPart,downwardPart]
 
         }
 
@@ -199,19 +202,6 @@ function main(){
         Render.run(render);
         let runner = Runner.create();
         Runner.run(runner, engine);
-/*        let mouse = Mouse.create(render.canvas),
-            mouseConstraint = MouseConstraint.create(engine, {
-            mouse: mouse,
-            constraint: {
-                stiffness: 0.2,
-                render: {
-                visible: false
-                }
-            }
-        });
-        Composite.add(world, mouseConstraint);
-        render.mouse = mouse;
-*/
 
         
 
@@ -289,8 +279,8 @@ function main(){
                         break;
                     case 3:
                         this.area = Unit * Unit * 4;
-                        this.width = Math.random() * (Unit * 3) + Unit;
-                        this.height = this.area / this.width;
+                        this.height = Math.random() * (Unit * 5 - this.area/(Unit * 5)) + this.area / (Unit * 5);
+                        this.width = this.area / this.height;
                         this.path = `0,0 0,${this.height} ${this.width},${this.height} ${this.width},0`
                         this.color = Tetris.colors[Math.floor(Math.random() * Tetris.colors.length)];
                     case 4:
@@ -467,7 +457,7 @@ function main(){
         let addBodyFlag = 1;
         let areaArray = [];
         let newArr;
-        let threshold = Unit * Unit * 7.5;
+        let threshold = Unit * Unit * 8;
         let fullLines = [];
         let tick =0;
         let score = 0;
@@ -486,14 +476,12 @@ function main(){
             Composite.add(world, rect);
         }
         function gameOver(){
-
+            Engine.clear(engine);
+            Render.stop(render);
+            Runner.stop(runner);
         }
-        
+
         Events.on(runner, 'afterTick', function(){
-            
-
-            
-
             if(forceDirection === Left){
                 Body.applyForce(currBody, currBody.position, {x : -currBody.mass * 0.002, y : 0});
                 
@@ -526,55 +514,46 @@ function main(){
                     console.log(i, "번째 줄 : ", areaArray[i]);
                     if(areaArray[i] >= threshold){
                         fullLines.push(i)
-
                     }
                 }
-                console.log(threshold)
-                console.log(fullLines)
-                newArr = new Set();
+
                 for(let fullLine of fullLines){
+                    newArr = [floor];
                     for(let freeBody of freeBodies.slice(1)){
                         let slices = getVerticesOutLine(freeBody, fullLine)
                         if (slices[0] === freeBody.vertices){
-                            newArr.add(freeBody);
+                            newArr.push(freeBody);
                         }
                         else{
                             Composite.remove(world, freeBody);
                             for(let slice of slices){
-                                //if (slice === undefined){
-                                //    continue;
-                                //}
+                                if (slice === undefined){
+                                    console.log("!")
+                                }
                                 let piece = customShape(
                                     {
                                         vertices : slice,
                                         color : freeBody.render.fillStyle
                                     }
                                 )
-                                newArr.add(piece)
+                                newArr.push(piece)
                                 Composite.add(world, piece);    
                             }
                         }
                     }
-
-                            
+                    freeBodies = newArr.slice(0);
                 }
-                
-                if(fullLines.length){
-                    freeBodies = [floor].concat(Array.from(newArr));
-                }
-                
                 score += fullLines.length;
                 scoreBoard.innerHTML = `score : ${score}`
-
+                console.log(freeBodies)
                 fullLines = [];
-
             }
             if (addBodyFlag){
                 addBodyFlag = 0
                 //currBody = new Tetris(Math.floor(Math.random() * Tetris.length)).body;
                 currBody = new Tetris(3).body;
-                
                 Composite.add(world, currBody);     
+                console.log(currBody)
             }
             if(isValidCollide(currBody)){
                 freeBodies.push(currBody)
@@ -587,6 +566,7 @@ function main(){
                     addBodyFlag = 1;
                 }
             }
+
 
             
         })
