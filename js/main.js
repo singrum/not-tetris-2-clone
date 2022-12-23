@@ -231,7 +231,7 @@ function main(){
         Space.column = Space.row * Space.ratio;
         
 
-        let floor = Bodies.rectangle(WindowProp.width / 2, WindowProp.height - Floor.height / 2, Space.width, Floor.height, 
+        let floor = Bodies.rectangle(WindowProp.width/2, WindowProp.height - Floor.height / 2, WindowProp.width, Floor.height, 
             {
                 isStatic: 1, 
                 render : {fillStyle: "#000000", lineWidth: 0}
@@ -270,7 +270,8 @@ function main(){
         
         //object
         class Tetris{
-            static length = 3;
+            static colors = ['#9b5fe0', '#16a4d8','#60dbe8','#8bd346','#efdf48','#f9a52c'];
+            static length = 4;
             constructor(shape){
                 this.name = shape;
                 switch(shape){
@@ -287,6 +288,11 @@ function main(){
                         this.color = '#60dbe8'
                         break;
                     case 3:
+                        this.area = Unit * Unit * 4;
+                        this.width = Math.random() * (Unit * 3) + Unit;
+                        this.height = this.area / this.width;
+                        this.path = `0,0 0,${this.height} ${this.width},${this.height} ${this.width},0`
+                        this.color = Tetris.colors[Math.floor(Math.random() * Tetris.colors.length)];
                     case 4:
 
                 }
@@ -432,46 +438,6 @@ function main(){
             forceDown = -1;
         })
 
-        // document.addEventListener('touchstart', handleTouchStart, false);        
-        // document.addEventListener('touchmove', handleTouchMove, false);
-        // document.addEventListener('touchend', handleTouchEnd, false); 
-        // let xDown = null;                                                        
-        // let yDown = null;
-    
-        // function getTouches(evt) {
-        // return evt.touches ||             
-        //         evt.originalEvent.touches; 
-        // }                                                     
-                                                                                
-        // function handleTouchStart(evt) {
-        //     const firstTouch = getTouches(evt)[0];                                      
-        //     xDown = firstTouch.clientX;                                      
-        //     yDown = firstTouch.clientY;                                      
-        // };                                                
-                                                                                
-        // function handleTouchMove(evt) {
-        //     if ( ! xDown || ! yDown ) {
-        //         return;
-        //     }
-    
-        //     let xUp = evt.touches[0].clientX;     
-    
-        //     let xDiff = xDown - xUp;
-
-        //     if ( xDiff > 0 ) {
-        //         forceDirection = Left;
-        //     } else {
-        //         forceDirection = Right;
-        //     }           
-        //     /* reset values */
-        //     xDown = null;
-        //     yDown = null;                                             
-        // };
-
-        // function handleTouchEnd(evt){
-        //     forceDirection = -1;
-        //     forceDirection = -1
-        // }
 
         zButton.addEventListener("touchstart", function(e){
             rotateDirection = CCL;
@@ -525,12 +491,7 @@ function main(){
         
         Events.on(runner, 'afterTick', function(){
             
-            if (addBodyFlag){
-                addBodyFlag = 0
-                currBody = new Tetris(Math.floor(Math.random() * Tetris.length)).body;
-                
-                Composite.add(world, currBody);     
-            }
+
             
 
             if(forceDirection === Left){
@@ -562,43 +523,58 @@ function main(){
                 // lineIndex = 0,1,2,3,4,...,19,20
                 for(let i = 0; i<20; i++){
                     areaArray[i] = getTotalAreaInLine(freeBodies.slice(1), i);                   
+                    console.log(i, "번째 줄 : ", areaArray[i]);
                     if(areaArray[i] >= threshold){
                         fullLines.push(i)
+
                     }
                 }
-                newArr = [floor];
+                console.log(threshold)
+                console.log(fullLines)
+                newArr = new Set();
                 for(let fullLine of fullLines){
                     for(let freeBody of freeBodies.slice(1)){
                         let slices = getVerticesOutLine(freeBody, fullLine)
                         if (slices[0] === freeBody.vertices){
-                            newArr.push(freeBody);
+                            newArr.add(freeBody);
                         }
                         else{
                             Composite.remove(world, freeBody);
                             for(let slice of slices){
-                                if (slice === undefined){
-                                    break;
-                                }
+                                //if (slice === undefined){
+                                //    continue;
+                                //}
                                 let piece = customShape(
                                     {
                                         vertices : slice,
                                         color : freeBody.render.fillStyle
                                     }
                                 )
-                                newArr.push(piece)
+                                newArr.add(piece)
                                 Composite.add(world, piece);    
                             }
                         }
                     }
-                    freeBodies = newArr.slice(0);
-                    newArr = [];
-                    score += fullLines.length;
-                    scoreBoard.innerHTML = `score : ${score}`
+
                             
                 }
+                
+                if(fullLines.length){
+                    freeBodies = [floor].concat(Array.from(newArr));
+                }
+                
+                score += fullLines.length;
+                scoreBoard.innerHTML = `score : ${score}`
 
                 fullLines = [];
 
+            }
+            if (addBodyFlag){
+                addBodyFlag = 0
+                //currBody = new Tetris(Math.floor(Math.random() * Tetris.length)).body;
+                currBody = new Tetris(3).body;
+                
+                Composite.add(world, currBody);     
             }
             if(isValidCollide(currBody)){
                 freeBodies.push(currBody)
