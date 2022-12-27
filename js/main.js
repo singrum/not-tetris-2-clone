@@ -13,8 +13,28 @@
     https://colorswall.com/palette/171311 color pallete
 */
 
-function main(){
 
+
+
+function main(){
+    document.querySelector("#btn0").addEventListener("click", ()=>{startGame(0)});
+    document.querySelector("#btn1").addEventListener("click", ()=>{startGame(1)});
+
+    function startGame(btnnum){
+        document.querySelector('.btn-set').remove();
+        document.querySelector('body').insertAdjacentHTML('beforeend', 
+        `<div id = "ceiling"></div>
+
+        <span id="score-board">score : 0</span>
+
+        <span class="controller" id="up-button"></span>
+        <span class="controller" id="down-button"></span>
+        <span class="controller" id="left-button"></span>
+        <span class="controller" id="right-button"></span>
+
+        <span class="controller" id="z-button"></span>
+        <span class="controller" id="x-button"></span>`
+        )
 ///////////////////////////////// fucntions /////////////////////////////
         function arrToVertices(arr){
             let result = ``;
@@ -278,13 +298,19 @@ function main(){
                         this.color = '#60dbe8'
                         break;
                     case 3:
+                        //random ractangle
                         this.area = Unit * Unit * 4;
                         this.height = Math.random() * (Unit * 5 - this.area/(Unit * 5)) + this.area / (Unit * 5);
                         this.width = this.area / this.height;
                         this.path = `0,0 0,${this.height} ${this.width},${this.height} ${this.width},0`
                         this.color = Tetris.colors[Math.floor(Math.random() * Tetris.colors.length)];
+                        break;
                     case 4:
-
+                        //random squere
+                        let ran = num=>Math.random() * num * Unit;
+                        this.path = `0,0 0,${ran(3)} ${ran(3)},${ran(3)} ${ran(3)},${ran(3)} ${ran(3)},${ran(3)} ${ran(3)},${ran(3)}`;
+                        this.color = Tetris.colors[Math.floor(Math.random() * Tetris.colors.length)];
+                        break;
                 }
 
                 switch(shape){
@@ -292,7 +318,9 @@ function main(){
                     case 1:
                     case 2:
                     case 3:
-                        this.body = Bodies.fromVertices(Space.x + Space.width / 2 , Space.y - Unit * 2 ,Vertices.fromPath(this.path),
+                        this.vertices =Vertices.fromPath(this.path);
+                        Vertices.rotate(this.vertices, Math.floor(Math.random() * 2) * Math.PI / 2, Vertices.centre(this.vertices));
+                        this.body = Bodies.fromVertices(Space.x + Space.width / 2 , Space.y - Unit * 2 ,this.vertices,
                         {   frictionAir : 0.1,
                             friction : 0.2,
                             frictionStatic : 0.5,
@@ -300,6 +328,19 @@ function main(){
                             render: {fillStyle: this.color}
                         });
                         break;
+                    case 4:
+                        this.vertices =Vertices.fromPath(this.path);
+                        Vertices.rotate(this.vertices, Math.random() * Math.PI * 2, Vertices.centre(this.vertices));
+                        this.body = Bodies.fromVertices(Space.x + Space.width / 2 , Space.y - Unit * 2 , this.vertices,
+                        {   frictionAir : 0.1,
+                            friction : 0.2,
+                            frictionStatic : 0.5,
+                            isStatic: 0,
+                            render: {fillStyle: this.color}
+                        });
+
+                        break;
+
                 }
             }
         }
@@ -457,11 +498,18 @@ function main(){
         let addBodyFlag = 1;
         let areaArray = [];
         let newArr;
-        let threshold = Unit * Unit * 8;
         let fullLines = [];
         let tick =0;
         let score = 0;
+        let threshold;
         const scoreBoard = document.querySelector("#score-board");
+        if(btnnum === 0){
+            threshold = Unit * Unit * 8;
+        }
+        else if(btnnum === 1){
+            threshold = Unit * Unit * 7.5;
+        }
+        
 
 
         function isValidCollide(body){
@@ -545,15 +593,17 @@ function main(){
                 }
                 score += fullLines.length;
                 scoreBoard.innerHTML = `score : ${score}`
-                console.log(freeBodies)
                 fullLines = [];
             }
             if (addBodyFlag){
-                addBodyFlag = 0
-                //currBody = new Tetris(Math.floor(Math.random() * Tetris.length)).body;
-                currBody = new Tetris(3).body;
+                addBodyFlag = 0;
+                if (btnnum === 0){
+                    currBody = new Tetris(3).body;
+                }
+                else if(btnnum === 1){
+                    currBody = new Tetris(4).body;
+                }
                 Composite.add(world, currBody);     
-                console.log(currBody)
             }
             if(isValidCollide(currBody)){
                 freeBodies.push(currBody)
@@ -570,9 +620,12 @@ function main(){
 
             
         })
+    }
+
 
     
 }
+
 
 
 window.onload = main
