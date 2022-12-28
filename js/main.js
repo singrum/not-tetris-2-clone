@@ -33,7 +33,32 @@ function main(){
         <span class="controller" id="right-button"></span>
 
         <span class="controller" id="z-button"></span>
-        <span class="controller" id="x-button"></span>`
+        <span class="controller" id="x-button"></span>
+        
+        <div class = "bars">
+        <div class = "bar" id = "bar0"></div>
+        <div class = "bar" id = "bar1"></div>
+        <div class = "bar" id = "bar2"></div>
+        <div class = "bar" id = "bar3"></div>
+        <div class = "bar" id = "bar4"></div>
+        <div class = "bar" id = "bar5"></div>
+        <div class = "bar" id = "bar6"></div>
+        <div class = "bar" id = "bar7"></div>
+        <div class = "bar" id = "bar8"></div>
+        <div class = "bar" id = "bar9"></div>
+        <div class = "bar" id = "bar10"></div>
+        <div class = "bar" id = "bar11"></div>
+        <div class = "bar" id = "bar12"></div>
+        <div class = "bar" id = "bar13"></div>
+        <div class = "bar" id = "bar14"></div>
+        <div class = "bar" id = "bar15"></div>
+        <div class = "bar" id = "bar16"></div>
+        <div class = "bar" id = "bar17"></div>
+        <div class = "bar" id = "bar18"></div>
+        <div class = "bar" id = "bar19"></div>
+        <div class = "bar" id = "bar20"></div>
+    </div>
+        `
         )
 ///////////////////////////////// fucntions /////////////////////////////
         function arrToVertices(arr){
@@ -239,6 +264,7 @@ function main(){
         Space.x = (WindowProp.width - Space.width) / 2;
         Space.y = Ceiling.height;
         Space.column = Space.row * Space.ratio;
+
         
 
         let floor = Bodies.rectangle(WindowProp.width/2, WindowProp.height - Floor.height / 2, WindowProp.width, Floor.height, 
@@ -258,7 +284,6 @@ function main(){
         const ceiling = document.querySelector("#ceiling");
         ceiling.style.width = "100%";
         ceiling.style.height = `${Ceiling.height}px`;
-        console.log(ceiling)
 
         let leftWall = Bodies.rectangle((WindowProp.width - Space.width)/4, WindowProp.height / 2, (WindowProp.width - Space.width)/2,WindowProp.height, 
             {                
@@ -277,6 +302,16 @@ function main(){
         setFriction(rightWall, 0, 0);
         Composite.add(world, [floor, leftWall, rightWall])
         
+        const bars = document.querySelector(".bars");
+        bars.style.bottom = `${Floor.height}px`;
+        bars.style.left = `${Space.x + Space.width + 10}px`;
+        
+        const barArr = document.querySelectorAll(".bar");
+        barArr.forEach((bar,i,arr) => {
+            bar.style.bottom = `${i * Unit}px`
+            bar.style.width = `${Unit}px`
+            // bar.style.height = `${Unit}px`
+        })
         
         //object
         class Tetris{
@@ -521,6 +556,19 @@ function main(){
         }
 
         Events.on(runner, 'afterTick', function(){
+            for(let i = 0; i<20; i++){
+                areaArray[i] = getTotalAreaInLine(freeBodies.slice(1), i);
+                if(areaArray[i] >= threshold){
+                }
+            }
+            barArr.forEach((bar, i, arr) => {
+                let h = areaArray[i] / threshold * Unit;
+                if(h > Unit){
+                    h = Unit;
+                }
+                bar.style.height = `${h}px`    
+            })
+            
             if(forceDirection === Left){
                 Body.applyForce(currBody, currBody.position, {x : -currBody.mass * 0.002, y : 0});
                 
@@ -549,8 +597,8 @@ function main(){
                 checkLineFlag = 0;                
                 // lineIndex = 0,1,2,3,4,...,19,20
                 for(let i = 0; i<20; i++){
-                    areaArray[i] = getTotalAreaInLine(freeBodies.slice(1), i);                   
-                    console.log(i, "번째 줄 : ", areaArray[i]);
+                    // areaArray[i] = getTotalAreaInLine(freeBodies.slice(1), i);                   
+                    // console.log(i, "번째 줄 : ", areaArray[i]);
                     if(areaArray[i] >= threshold){
                         fullLines.push(i)
                     }
