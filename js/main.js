@@ -377,17 +377,7 @@ function main(){
         xButton.style.left = `${zxCenter.x + (buttonRadius + buttonDistance / 2)}px`
         xButton.style.top = `${zxCenter.y}px`
 
-        
-
-
-
-        
-
-
-
-
-
-/////////////////////////////////////////////////// events ///////////////////////////////////////////////////
+/////////////////////////////////////////////////// events //////////////////////////////////////////////////
         let forceDirection = -1;
         let forceDown = -1;
         let forceUp = -1;
