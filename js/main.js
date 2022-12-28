@@ -27,13 +27,13 @@ function main(){
 
         <span id="score-board">score : 0</span>
 
-        <span class="controller" id="up-button"></span>
-        <span class="controller" id="down-button"></span>
-        <span class="controller" id="left-button"></span>
-        <span class="controller" id="right-button"></span>
+        <span class="controller material-symbols-outlined" style="display:flex;justify-content:center;align-items:center;font-size:40px;" id="up-button">keyboard_arrow_up</span>
+        <span class="controller material-symbols-outlined" style="display:flex;justify-content:center;align-items:center;font-size:40px;" id="down-button">keyboard_arrow_down</span>
+        <span class="controller material-symbols-outlined" style="display:flex;justify-content:center;align-items:center;font-size:40px;" id="left-button">keyboard_arrow_left</span>
+        <span class="controller material-symbols-outlined" style="display:flex;justify-content:center;align-items:center;font-size:40px;" id="right-button">keyboard_arrow_right</span>
 
-        <span class="controller" id="z-button"></span>
-        <span class="controller" id="x-button"></span>
+        <span class="controller material-symbols-outlined" style="display:flex;justify-content:center;align-items:center;font-size:40px;transform: scaleX(-1);" id="z-button">refresh</span>
+        <span class="controller material-symbols-outlined" style="display:flex;justify-content:center;align-items:center;font-size:40px;" id="x-button">refresh</span>
         
         <div class = "bars">
         <div class = "bar" id = "bar0"></div>
@@ -310,7 +310,6 @@ function main(){
         barArr.forEach((bar,i,arr) => {
             bar.style.bottom = `${i * Unit}px`
             bar.style.width = `${Unit}px`
-            // bar.style.height = `${Unit}px`
         })
         
         //object
