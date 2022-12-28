@@ -68,7 +68,7 @@ function main(){
             if(! shapeOption.pos) {
                 result = Bodies.fromVertices(centre.x, centre.y, shapeOption.vertices, {
                     frictionAir : 0.1,
-                    friction : 0.2,
+                    friction : 0.4,
                     frictionStatic : 0.5,
                     isStatic: static,
                     render : {fillStyle: shapeOption.color}
@@ -77,7 +77,7 @@ function main(){
             else {
                 result = Bodies.fromVertices(shapeOption.pos.x, shapeOption.pos.y, shapeOption.vertices, {
                     frictionAir : 0.1,
-                    friction : 0.2,
+                    friction : 0.4,
                     frictionStatic : 0.5,
                     isStatic: static,
                     render : {fillStyle: shapeOption.color}
@@ -247,7 +247,7 @@ function main(){
                 render : {fillStyle: "#000000", lineWidth: 0}
             }
         );
-        setFriction(floor, 0.2, 0.5);
+        setFriction(floor, 0.4, 0.5);
 
 //        let ceiling = Bodies.rectangle(WindowProp.width / 2, Ceiling.height / 2, Space.width, Ceiling.height, 
 //            {
@@ -308,7 +308,7 @@ function main(){
                     case 4:
                         //random squere
                         let ran = num=>Math.random() * num * Unit;
-                        this.path = `0,0 0,${ran(3)} ${ran(3)},${ran(3)} ${ran(3)},${ran(3)} ${ran(3)},${ran(3)} ${ran(3)},${ran(3)}`;
+                        this.path = `${ran(3)},${ran(3)} ${ran(3)},${ran(3)} ${ran(3)},${ran(3)} ${ran(3)},${ran(3)} ${ran(3)},${ran(3)} ${ran(3)},${ran(3)} ${ran(3)},${ran(3)} ${ran(3)},${ran(3)}`;
                         this.color = Tetris.colors[Math.floor(Math.random() * Tetris.colors.length)];
                         break;
                 }
@@ -322,18 +322,19 @@ function main(){
                         Vertices.rotate(this.vertices, Math.floor(Math.random() * 2) * Math.PI / 2, Vertices.centre(this.vertices));
                         this.body = Bodies.fromVertices(Space.x + Space.width / 2 , Space.y - Unit * 2 ,this.vertices,
                         {   frictionAir : 0.1,
-                            friction : 0.2,
+                            friction : 0.4,
                             frictionStatic : 0.5,
                             isStatic: 0,
                             render: {fillStyle: this.color}
                         });
                         break;
                     case 4:
-                        this.vertices =Vertices.fromPath(this.path);
+                        this.vertices = Vertices.clockwiseSort(Vertices.fromPath(this.path));
                         Vertices.rotate(this.vertices, Math.random() * Math.PI * 2, Vertices.centre(this.vertices));
+                        
                         this.body = Bodies.fromVertices(Space.x + Space.width / 2 , Space.y - Unit * 2 , this.vertices,
                         {   frictionAir : 0.1,
-                            friction : 0.2,
+                            friction : 0.4,
                             frictionStatic : 0.5,
                             isStatic: 0,
                             render: {fillStyle: this.color}
