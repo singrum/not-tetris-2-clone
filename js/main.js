@@ -498,7 +498,7 @@ function main(){
             threshold = Unit * Unit * 8;
         }
         else if(btnnum === 1){
-            threshold = Unit * Unit * 7.5;
+            threshold = Unit * Unit * 8;
         }
         
 
