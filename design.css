@@ -37,7 +37,11 @@ body {
   height : 100vh;
   display : flex;
   align-items: center;
-  justify-content: space-around;
+  justify-content: center;
+  flex-direction: column;
+}
+set{
+  margin : 10px;
 }
 
 .button-17 {
