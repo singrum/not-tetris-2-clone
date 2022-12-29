@@ -19,6 +19,7 @@
 function main(){
     document.querySelector("#btn0").addEventListener("click", ()=>{startGame(0)});
     document.querySelector("#btn1").addEventListener("click", ()=>{startGame(1)});
+    document.querySelector("#btn2").addEventListener("click", ()=>{startGame(2)});
 
     function startGame(btnnum){
         document.querySelector('.btn-set').remove();
@@ -341,8 +342,13 @@ function main(){
                         break;
                     case 4:
                         //random squere
-                        let ran = num=>Math.random() * num * Unit;
-                        this.path = `${ran(3)},${ran(3)} ${ran(3)},${ran(3)} ${ran(3)},${ran(3)} ${ran(3)},${ran(3)} ${ran(3)},${ran(3)} ${ran(3)},${ran(3)} ${ran(3)},${ran(3)} ${ran(3)},${ran(3)}`;
+                        this.ran = num=>Math.random() * num * Unit;
+                        this.path = `${this.ran(3)},${this.ran(3)} ${this.ran(3)},${this.ran(3)} ${this.ran(3)},${this.ran(3)} ${this.ran(3)},${this.ran(3)} ${this.ran(3)},${this.ran(3)} ${this.ran(3)},${this.ran(3)} ${this.ran(3)},${this.ran(3)} ${this.ran(3)},${this.ran(3)}`;
+                        this.color = Tetris.colors[Math.floor(Math.random() * Tetris.colors.length)];
+                        break;
+                    case 5:
+                        this.ran = num=>Math.random() * num * Unit;
+                        this.path = `${this.ran(3)},${this.ran(3)} ${this.ran(3)},${this.ran(3)} ${this.ran(3)},${this.ran(3)}`;
                         this.color = Tetris.colors[Math.floor(Math.random() * Tetris.colors.length)];
                         break;
                 }
@@ -363,6 +369,7 @@ function main(){
                         });
                         break;
                     case 4:
+                    case 5:
                         this.vertices = Vertices.clockwiseSort(Vertices.fromPath(this.path));
                         Vertices.rotate(this.vertices, Math.random() * Math.PI * 2, Vertices.centre(this.vertices));
                         
@@ -534,6 +541,9 @@ function main(){
         else if(btnnum === 1){
             threshold = Unit * Unit * 8;
         }
+        else if(btnnum === 2){
+            threshold = Unit * Unit * 8;
+        }
         
 
 
@@ -640,6 +650,9 @@ function main(){
                 }
                 else if(btnnum === 1){
                     currBody = new Tetris(4).body;
+                }
+                else if(btnnum === 2){
+                    currBody = new Tetris(5).body;
                 }
                 Composite.add(world, currBody);     
             }
