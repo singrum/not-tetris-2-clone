@@ -20,6 +20,7 @@ function main(){
     document.querySelector("#btn0").addEventListener("click", ()=>{startGame(0)});
     document.querySelector("#btn1").addEventListener("click", ()=>{startGame(1)});
     document.querySelector("#btn2").addEventListener("click", ()=>{startGame(2)});
+    document.querySelector("#btn3").addEventListener("click", ()=>{startGame(3)});
 
     function startGame(btnnum){
         document.querySelector('.btn-set').remove();
@@ -315,7 +316,7 @@ function main(){
         
         //object
         class Tetris{
-            static colors = ['#9b5fe0', '#16a4d8','#60dbe8','#8bd346','#efdf48','#f9a52c'];
+            static colors = ['#9b5fe0', '#16a4d8','#60dbe8','#8bd346','#efdf48','#f9a52c', '#808080'];
             static length = 4;
             constructor(shape){
                 this.name = shape;
@@ -351,6 +352,22 @@ function main(){
                         this.path = `${this.ran(3)},${this.ran(3)} ${this.ran(3)},${this.ran(3)} ${this.ran(3)},${this.ran(3)}`;
                         this.color = Tetris.colors[Math.floor(Math.random() * Tetris.colors.length)];
                         break;
+                    case 6:
+                        
+                        this.arr = [`0,0 ${4 * Unit},0 ${2 * Unit},${2 * Unit}`,
+                            `0,0 ${2 * Unit},${2 * Unit} 0,${4 * Unit}`,
+                            `${Unit},0 ${2 * Unit},${Unit} 0,${Unit}`,
+                            `${Unit},0 ${Unit},${2*Unit} 0,${Unit}`,
+                            `${Unit},0 ${2*Unit},${Unit} ${Unit},${2*Unit} 0,${Unit}`,
+                            `${Unit},0 ${Unit},${2*Unit} 0,${Unit} 0,${3*Unit}`,
+                            `${2*Unit},0 ${2*Unit},${2*Unit} 0,${2*Unit}`];
+                        this.index = Math.floor(Math.random() * this.arr.length)
+                        this.path = this.arr[this.index];
+                        this.color = Tetris.colors[this.index];
+                        break;
+
+                        
+
                 }
 
                 switch(shape){
@@ -358,6 +375,7 @@ function main(){
                     case 1:
                     case 2:
                     case 3:
+                    case 6:
                         this.vertices =Vertices.fromPath(this.path);
                         Vertices.rotate(this.vertices, Math.floor(Math.random() * 2) * Math.PI / 2, Vertices.centre(this.vertices));
                         this.body = Bodies.fromVertices(Space.x + Space.width / 2 , Space.y - Unit * 2 ,this.vertices,
@@ -544,6 +562,9 @@ function main(){
         else if(btnnum === 2){
             threshold = Unit * Unit * 8;
         }
+        else if(btnnum === 3){
+            threshold = Unit * Unit * 8.5;
+        }
         
 
 
@@ -653,6 +674,9 @@ function main(){
                 }
                 else if(btnnum === 2){
                     currBody = new Tetris(5).body;
+                }
+                else if(btnnum === 3){
+                    currBody = new Tetris(6).body;
                 }
                 Composite.add(world, currBody);     
             }
