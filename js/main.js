@@ -359,7 +359,7 @@ function main(){
                             `${Unit},0 ${2 * Unit},${Unit} 0,${Unit}`,
                             `${Unit},0 ${Unit},${2*Unit} 0,${Unit}`,
                             `${Unit},0 ${2*Unit},${Unit} ${Unit},${2*Unit} 0,${Unit}`,
-                            `${Unit},0 ${Unit},${2*Unit} 0,${Unit} 0,${3*Unit}`,
+                            `${Unit},0 ${Unit},${2*Unit} 0,${3*Unit} 0,${Unit}`,
                             `${2*Unit},0 ${2*Unit},${2*Unit} 0,${2*Unit}`];
                         this.index = Math.floor(Math.random() * this.arr.length)
                         this.path = this.arr[this.index];
@@ -569,7 +569,7 @@ function main(){
 
 
         function isValidCollide(body){
-            
+
             return freeBodies.some(freeBody => Matter.Collision.collides(body, freeBody));
 
         }
@@ -586,6 +586,22 @@ function main(){
         }
 
         Events.on(runner, 'afterTick', function(){
+            if (addBodyFlag){
+                addBodyFlag = 0;
+                if (btnnum === 0){
+                    currBody = new Tetris(3).body;
+                }
+                else if(btnnum === 1){
+                    currBody = new Tetris(4).body;
+                }
+                else if(btnnum === 2){
+                    currBody = new Tetris(5).body;
+                }
+                else if(btnnum === 3){
+                    currBody = new Tetris(6).body;
+                }
+                Composite.add(world, currBody);     
+            }
             for(let i = 0; i<20; i++){
                 areaArray[i] = getTotalAreaInLine(freeBodies.slice(1), i);
                 if(areaArray[i] >= threshold){
@@ -663,22 +679,6 @@ function main(){
                 score += fullLines.length;
                 scoreBoard.innerHTML = `score : ${score}`
                 fullLines = [];
-            }
-            if (addBodyFlag){
-                addBodyFlag = 0;
-                if (btnnum === 0){
-                    currBody = new Tetris(3).body;
-                }
-                else if(btnnum === 1){
-                    currBody = new Tetris(4).body;
-                }
-                else if(btnnum === 2){
-                    currBody = new Tetris(5).body;
-                }
-                else if(btnnum === 3){
-                    currBody = new Tetris(6).body;
-                }
-                Composite.add(world, currBody);     
             }
             if(isValidCollide(currBody)){
                 freeBodies.push(currBody)
