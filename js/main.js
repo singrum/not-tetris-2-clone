@@ -554,16 +554,16 @@ function main(){
         let threshold;
         const scoreBoard = document.querySelector("#score-board");
         if(btnnum === 0){
-            threshold = Unit * Unit * 8.5;
+            threshold = Unit * Unit * 8.2;
         }
         else if(btnnum === 1){
-            threshold = Unit * Unit * 8.5;
+            threshold = Unit * Unit * 8.2;
         }
         else if(btnnum === 2){
-            threshold = Unit * Unit * 8.5;
+            threshold = Unit * Unit * 8.2;
         }
         else if(btnnum === 3){
-            threshold = Unit * Unit * 8.5;
+            threshold = Unit * Unit * 8.2;
         }
         
 
